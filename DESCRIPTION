@@ -1,0 +1,27 @@
+Package: RMoCap
+Type: Package
+Title: Package for processing and analysis motion capture (mocap) data.
+Version: 1.0.0
+Author: Tomasz Hachaj, Marek R. Ogiela
+Maintainer: Tomasz Hachaj <tomekhachaj@o2.pl>
+Description: With functions from this package you can:
+    - load and save Biovision Hierarchy (BVH) files,
+    - convert direct kinematic model to hierarchical kinematic model and vice versa,
+    - plot interactive plots of motion capture (mocap) data,
+    - align two mocap recordings,
+    - while walking with translation and acceleration data is is possible to calculate correct body joints displacement,
+    - average many motion capture recordings that presents the same activity and store it as a single one,
+    - perform comparision analysis of two motion capture recordings using advanced Dynamic Time Wapring - besed procedures and display results,
+    This package has also many useful algebraic functions like Quaternion Markley averaging algorithms etc.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Imports:
+    smoother,
+    rgl,
+    smoother,
+    RSpincalc,
+    subplex,
+    signal,
+    compiler
+RoxygenNote: 6.0.1
