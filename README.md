@@ -1,4 +1,4 @@
-# RMoCap
+﻿# RMoCap
 R language package for processing and analysis motion capture (mocap) data.
 
 In order to install package in R, run following commands:
