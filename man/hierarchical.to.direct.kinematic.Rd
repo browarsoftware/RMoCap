@@ -7,7 +7,7 @@
 hierarchical.to.direct.kinematic(input.skeleton)
 }
 \arguments{
-\item{input.skeleton}{list in the same format as one generated with read.bvh or read.mocap function.}
+\item{input.skeleton}{list in the same format as one generated with read.mocap function.}
 }
 \value{
 data frame with direct kinematic model. Names of the columns are the same as in input.skeleton.

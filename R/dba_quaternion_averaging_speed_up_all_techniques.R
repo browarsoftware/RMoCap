@@ -384,7 +384,7 @@ resampleArray <- function(sig, newSignalLength) {
 #' @param eps treshold value for DBA - iteration stops when absolute value of difference between normalized DTW distances on this and previous iteration is less than eps (default value is eps = 0.0001).
 #' @param plot.me if TRUE, plots DTW distances for each averaged signal (deafulat value is plot.me = 50).
 #'
-#' @return data frame with averaged mocap signal.
+#' @return return object of class averaged.mocap.
 #'
 #' @examples
 #'  #load list of objects of mocap class
@@ -397,13 +397,19 @@ resampleArray <- function(sig, newSignalLength) {
 #'  }
 #'  #run compiled version of mocap.averaging function
 #'  res.data <- mocap.averagingCmp(myList, 50, eps = 0.000001)
+#'  plot(res.data)
 #'  #write results to disc as bvh file
 #'  skel <- set.data.frame(mawashi.geri.right.list[[1]], res.data$fullData)
 #'  write.bvh(path = "avg.mawashi.geri.right.bvh", skeleton.helper = skel)
 mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.me=TRUE)
 {
-  require(RSpincalc)
-  require('signal')
+  library(RSpincalc)
+  library('signal')
+  if (DBAIterationsCount < 1)
+  {
+    DBAIterationsCount = 2
+    message("DBAIterationsCount < 1 was changed to 2.")
+  }
 
   #dirPathToData <- "e:\\mocap_data\\karate\\2016-10-26 ShorinRyu MP\\evaluation\\zenkutsu_dachi_right\\segmented\\"
   #dirPathToData <- "e:\\mocap_data\\karate\\2016-10-26 ShorinRyu MP\\evaluation\\yoko_geri_right\\segmented\\"
@@ -499,10 +505,11 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
                                               myList[[a]][fy][fposition,],
                                               myList[[a]][fz][fposition,])
         }
-        df <- as.data.frame(matrix(unlist(helper_list), nrow=10, byrow=T))
+        df <- as.data.frame(matrix(unlist(helper_list), nrow=length(myList), byrow=T))
         all_quat[[fposition]] <- df
     }
 
+    #add borders for smoothing puroposes
     kk <- append(all_quat[1], all_quat)
     for (a in 1:9)
     {
@@ -520,7 +527,7 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
     #print('2')
     #ptm <- proc.time()
     signal.id <<- colToITerate
-    as <- my_dbaCmp(kk, DBAIterationsCount,1, eps)
+    as <- my_dbaCmp(kk, DBAIterationsCount,-1, eps)
 
 
     #print(proc.time() - ptm)
@@ -617,12 +624,70 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
     legend("topright", legend=colnames(plot.data), col=color.rgb, pch = (1:length(color.rgb) %% 11), ncol=4)
   }
   rm(norm.distance, envir = .GlobalEnv)
+  class(res.data) <- "averaged.mocap"
   return (res.data)
   #write.csv(fullData, file=dirPathToSave, row.names = FALSE, quote = FALSE)
 }
 
-
-
 library(compiler)
 mocap.averagingCmp <- cmpfun(mocap.averaging)
 
+#' A class returned by mocap.averaging function.
+#'
+#' @docType class
+#' @usage see documentation of mocap.averaging.
+#' @format
+#' a list containing data frame (fullData) and data frame (norm.distance) with normalized distance optimized during averaging.
+#'
+#' @keywords class
+#' @examples
+#' data("mawashi.geri.right.list")
+#' myList <- list()
+#' for (a in 1:length(mawashi.geri.right.list))
+#' {
+#'   myList[[a]] <-mawashi.geri.right.list[[a]]$data.frame
+#' }
+#' res.data <- mocap.averagingCmp(myList, 2, eps = 0.000001)
+#' plot(res.data)
+averaged.mocap <- setClass("averaged.mocap")
+
+
+#' Plots normalized distance of all joints from averaged.mocap class.
+#'
+#' @param data.to.plot object of class averaged.mocap.
+#'
+#' @examples
+#' data("mawashi.geri.right.list")
+#' myList <- list()
+#' for (a in 1:length(mawashi.geri.right.list))
+#' {
+#'   myList[[a]] <-mawashi.geri.right.list[[a]]$data.frame
+#' }
+#' res.data <- mocap.averagingCmp(myList, 2, eps = 0.000001)
+#' plot(res.data)
+plot.averaged.mocap <- function(data.to.plot)
+{
+  plot.data <- data.to.plot$norm.distance
+  for (j in 1:ncol(plot.data))
+    for (i in 2:nrow(plot.data))
+    {
+      if (is.na(plot.data[i,j]))
+        plot.data[i,j] <- plot.data[i-1,j]
+    }
+
+  color.rgb <- c()
+  for (a in 1:length(plot.data[1,]))
+  {
+    color.rgb <- c(color.rgb,rgb(runif(1),runif(1),runif(1)))
+  }
+
+  plot(plot.data[,1], ylab = "Normalized distance", xlab = "Iterations", ylim = c(0, max(plot.data)), col = color.rgb[1], pch=1)
+  lines(plot.data[,1], col = color.rgb[1], pch=1)
+
+  for (a in 2:length(plot.data[1,]))
+  {
+    points(plot.data[,a], col = color.rgb[a], pch=(a%%11))
+    lines(plot.data[,a], col = color.rgb[a], pch=(a%%11))
+  }
+  legend("topright", legend=colnames(plot.data), col=color.rgb, pch = (1:length(color.rgb) %% 11), ncol=4)
+}

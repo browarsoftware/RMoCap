@@ -27,6 +27,9 @@ analyze.mocap(data.configuration, ref.d = NULL, in.d = NULL,
 
 \item{smoothSize}{size of the gaussian smoothing window. Deafult value is smoothSize = 0.1.}
 }
+\value{
+a list containing data.configuration parameters plus algorihm results
+}
 \description{
 This procedure detects highest differences between reference and input mocap recording. Analysis goes as follows:
 \itemize{
@@ -53,7 +56,6 @@ inputdataalignment <- rotatedata(inputdata, refdata, "LeftShoulder","RightShould
 inputdataalignmentkinematic <- calculate.kinematic(inputdataalignment, bodypartname = "LeftShoulder")
 refdatakinematic <- calculate.kinematic(refdata, bodypartname = "LeftShoulder")
 inputdataalignmentkinematic <- aligninputandrefdata(inputdataalignmentkinematic, refdatakinematic, limbname = "LeftShoulder")
-analyzerange <- ceiling(nrow(inputdataalignment) * smoothSize * 1) #sprawdzia, jaki powinien bya ten przedzia3!
 
 data.configuration <- list()
 data.configuration[[1]] <- list(x1 = vector.to.list(refdatakinematic, "RightHand"),
@@ -99,7 +101,7 @@ data.configuration[[5]] <- list(x1 = x1[[3]],
    plotRGL = NULL,
    skeleton = NULL)
 
-analyze.mocap(data.configuration,
+res <- analyze.mocap(data.configuration,
 refdatakinematic,
 inputdataalignmentkinematic,
 extremumtreshold,
@@ -120,7 +122,6 @@ inputdataalignment <- rotatedata(inputdata, refdata, "LeftThigh","RightThigh")
 inputdataalignmentkinematic <- calculate.kinematic(inputdataalignment, bodypartname = "RightFoot")
 refdatakinematic <- calculate.kinematic(refdata, bodypartname = "RightFoot")
 inputdataalignmentkinematic <- aligninputandrefdata(inputdataalignmentkinematic, refdatakinematic, limbname = "RightFoot")
-analyzerange <- ceiling(nrow(inputdataalignment) * smoothSize * 1) #sprawdzia, jaki powinien bya ten przedzia3!
 
 data.configuration <- list()
 data.configuration[[1]] <- list(x1 = vector.to.list(refdatakinematic, "LeftFoot"),
@@ -162,7 +163,7 @@ data.configuration[[5]] <- list(x1 = x1[[3]],
   legend = "Z angle between LeftThigh and LeftLeg",
   plotRGL = NULL)
 
-analyze.mocap(data.configuration,
+res <- analyze.mocap(data.configuration,
 refdatakinematic,
 inputdataalignmentkinematic,
 extremumtreshold,

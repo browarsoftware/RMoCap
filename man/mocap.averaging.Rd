@@ -19,7 +19,7 @@ by Euler angles in degrees.}
 \item{plot.me}{if TRUE, plots DTW distances for each averaged signal (deafulat value is plot.me = 50).}
 }
 \value{
-data frame with averaged mocap signal.
+return object of class averaged.mocap.
 }
 \description{
 Averaging is performed on each rotation channel of hierarchical model sepparetly with Dynami Time Warping barycenter averagin (DBA), see:
@@ -41,6 +41,7 @@ Results are smoothed with Weighted Quaternion Markley averaging algorithms using
  }
  #run compiled version of mocap.averaging function
  res.data <- mocap.averagingCmp(myList, 50, eps = 0.000001)
+ plot(res.data)
  #write results to disc as bvh file
  skel <- set.data.frame(mawashi.geri.right.list[[1]], res.data$fullData)
  write.bvh(path = "avg.mawashi.geri.right.bvh", skeleton.helper = skel)

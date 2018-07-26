@@ -5,7 +5,8 @@
 \title{Overrides plot function to work with mocap class.}
 \usage{
 \method{plot}{mocap}(obj, frame = 0, my.color = "green",
-  frames.fraction = 0.1, alpha = 0.05, spheres = FALSE, append = FALSE)
+  frames.fraction = 0.1, alpha = 0.05, spheres = FALSE, append = FALSE,
+  print.text = FALSE)
 }
 \arguments{
 \item{obj}{mocap object.}
@@ -21,6 +22,8 @@
 \item{spheres}{if TRUE, position of body joints will be marked as spheres (default is spheres = FALSE).}
 
 \item{append}{if FALSE (default is append = FALSE) a new plot is generated, if TRUE a plot is drawn over open rgl window).}
+
+\item{print.text}{if TRUE (default is append = FALSE) plots name of the joints.}
 }
 \description{
 This function uses rgl package for 3D visualizations. It creates interactive 3D plots that enables rotation and scalling.
@@ -28,5 +31,5 @@ This function uses rgl package for 3D visualizations. It creates interactive 3D 
 \examples{
 data("right.arm.motion.1")
 plot(right.arm.motion.1, frame = 1, my.color = "white", alpha = 1, spheres = TRUE)
-plot(right.arm.motion.1, frames.fraction = 0.5, my.color = "white", alpha = 1, spheres = FALSE)
+plot(right.arm.motion.1, frames.fraction = 0.5, my.color = "white", alpha = 1, spheres = FALSE, print.text = TRUE)
 }

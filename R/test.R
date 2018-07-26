@@ -5,6 +5,17 @@
 #   Test Package:              'Ctrl + Shift + T'
 
 test <- function() {
+
+
+  if (!require(RMoCap))
+  {
+    if (!require(RMocap))
+    {
+      install.packages("devtools") # if you have not installed "devtools" package
+    }
+    devtools::install_github("browarsoftware/RMoCap")
+  }
+
   ######################################
   #read BVH file
   ######################################
@@ -15,6 +26,7 @@ test <- function() {
   close(f)
   #read hierarchical model stored in hierarchical BVH file
   heian.nidan <- read.mocap("e:\\bvh in r\\gotowy_kod\\output\\heian.nidan.bvh")
+  summary(heian.nidan)
   #plot kinematic data
   plot(x = heian.nidan$data.frame$Hips.Dx, y = heian.nidan$data.frame$Hips.Dz, type = "l", ylab = "Displacement X [cm]", xlab = "Displacement Z [cm]")
   title("Hips displacement during motion")
@@ -25,8 +37,7 @@ test <- function() {
   title("Hips displacement during motion")
 
   #plot
-  plot(heian.nidan, frame = 1, my.color = "white", alpha = 1, spheres = TRUE)
-
+  plot(heian.nidan, frame = 1, my.color = "white", alpha = 1, spheres = TRUE, print.text = TRUE)
   plot(heian.nidan, frames.fraction = 0.1, my.color = "white", alpha = 0.1, spheres = FALSE)
 
   ######################################
@@ -37,9 +48,9 @@ test <- function() {
 
   input.skeleton <- header.mocap
 
-  df.to.save <- heian.yondan[1:700,]
-  first.frame <- csv.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, debug.messages = TRUE)
-  write.bvh(first.frame, "e:\\bvh in r\\gotowy_kod\\output\\heian.yondan.frames700.bvh")
+  df.to.save <- heian.yondan[1:250,]
+  first.frame <- df.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, debug.messages = TRUE)
+  write.bvh(first.frame, "e:\\bvh in r\\gotowy_kod\\output\\heian.yondan.frames250.bvh")
 
   plot(df.to.save[,2], ylab = "Displacement [cm]", xlab = "Time [10^-2 sec]", pch = 1)
   for (a in 1:ncol(df.to.save))
@@ -50,7 +61,7 @@ test <- function() {
   legend("bottomright", legend=c("Original", "Jitter"), col=c("black", "red"), pch = c(1,2))
   title("Example channel of MoCap data")
 
-  first.frame <- csv.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, debug.messages = TRUE)
+  first.frame <- df.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, debug.messages = TRUE)
 
   #plot rotation data
   plot(first.frame$skeleton$Joints[[1]]$Rxyz[,1], type = "l", col = "black")
@@ -62,7 +73,7 @@ test <- function() {
   write.bvh(first.frame, "e:\\bvh in r\\gotowy_kod\\output\\jitter.heian.yondan.frames300.bvh")
 
   df.to.save <- heian.yondan[1000:1001,]
-  foo <- csv.to.bvh(input.skeleton, df.to.save, plot.me = TRUE, debug.messages = FALSE, frame.id = 1)
+  foo <- df.to.bvh(input.skeleton, df.to.save, plot.me = TRUE, debug.messages = FALSE, frame.id = 1)
 
 
   ######################################
@@ -70,10 +81,6 @@ test <- function() {
   ######################################
   data("header.mocap")
   data("heian.shodan")
-
-  #heian.shodan.corrected["RightFoot.ay"]
-
-  #heian.shodan[paste("RightFoot", ".ax", sep = "")]
 
   heian.shodan.corrected <- calculate.kinematic(heian.shodan, show.plot = "TRUE", plot.title = "Heian Shodan")
   original.bvh <- set.data.frame(header.mocap, heian.shodan)
@@ -86,11 +93,29 @@ test <- function() {
   write.bvh(original.bvh, "e:\\bvh in r\\gotowy_kod\\output\\original.bvh")
   write.bvh(corrected.bvh, "e:\\bvh in r\\gotowy_kod\\output\\corrected.bvh")
 
-  ######################################
-  #motion direction correction
-  ######################################
+  ###############################
+  #Motion data averaging
+  ###############################
 
-  #hands
+  data("mawashi.geri.right.list")
+  myList <- list()
+  #Use only data frames
+  for (a in 1:length(mawashi.geri.right.list))
+  {
+    myList[[a]] <-mawashi.geri.right.list[[a]]$data.frame
+  }
+  #set seed for repeatable results
+  set.seed(123)
+  res.data <- mocap.averagingCmp(myList, 50, eps = 0.000001)
+  plot(res.data)
+  #save results in BVH file
+  skel <- set.data.frame(mawashi.geri.right.list[[1]], res.data$fullData)
+  write.bvh(path = "e:\\bvh in r\\gotowy_kod\\output\\mawashi_50.bvh", skeleton.helper = skel)
+
+
+  ######################################
+  #motion capture analysis - hands
+  ######################################
   data(right.arm.motion.1)
   data(right.arm.motion.2)
 
@@ -108,9 +133,7 @@ test <- function() {
   inputdataalignmentkinematic <- aligninputandrefdata(inputdataalignmentkinematic, refdatakinematic, limbname = "LeftShoulder")
 
 
-  analyzerange <- ceiling(nrow(inputdataalignment) * smoothSize * 1) #sprawdzia, jaki powinien bya ten przedzia3!
-
-
+  #setup kinematic chain
   data.configuration <- list()
   data.configuration[[1]] <- list(x1 = vector.to.list(refdatakinematic, "RightHand"),
                     x2 = vector.to.list(inputdataalignmentkinematic, "RightHand"),
@@ -157,14 +180,16 @@ test <- function() {
                                   skeleton = NULL)
 
 
-  analyze.mocap(data.configuration,
+  res <- analyze.mocap(data.configuration,
                 refdatakinematic,
                 inputdataalignmentkinematic,
                 extremumtreshold,
                 smoothSize)
 
-  ##################################
-  #legs
+
+  ######################################
+  #motion capture analysis - legs
+  ######################################
 
   data(mawashi.geri.left.1)
   data(mawashi.geri.left.2)
@@ -172,7 +197,6 @@ test <- function() {
   refdata <- mawashi.geri.left.1$data.frame
   inputdata <- mawashi.geri.left.2$data.frame
 
-  #refdata, inputdata, v1, v2,
   extremumtreshold <- 0.66
   smoothSize <- 0.1
 
@@ -184,11 +208,8 @@ test <- function() {
   inputdataalignmentkinematic <- aligninputandrefdata(inputdataalignmentkinematic, refdatakinematic, limbname = "RightFoot")
 
 
-  analyzerange <- ceiling(nrow(inputdataalignment) * smoothSize * 1) #sprawdzia, jaki powinien bya ten przedzia3!
-
-
+  #setup kinematic chain
   data.configuration <- list()
-
   data.configuration[[1]] <- list(x1 = vector.to.list(refdatakinematic, "LeftFoot"),
                                   x2 = vector.to.list(inputdataalignmentkinematic, "LeftFoot"),
                                   FUN = euc.dist,
@@ -230,27 +251,11 @@ test <- function() {
                                   plotRGL = NULL)
 
 
-  analyze.mocap(data.configuration,
+  res <- analyze.mocap(data.configuration,
                 refdatakinematic,
                 inputdataalignmentkinematic,
                 extremumtreshold,
                 smoothSize)
 
-
-  ###############################
-  #
-
-  data("mawashi.geri.right.list")
-  myList <- list()
-
-  for (a in 1:length(mawashi.geri.right.list))
-  {
-    myList[[a]] <-mawashi.geri.right.list[[a]]$data.frame
-  }
-
-  res.data <- mocap.averagingCmp(myList, 50, eps = 0.000001)
-
-  skel <- set.data.frame(mawashi.geri.right.list[[1]], res.data$fullData)
-  write.bvh(path = "e:\\bvh in r\\gotowy_kod\\output\\mawashi_50.bvh", skeleton.helper = skel)
 
 }

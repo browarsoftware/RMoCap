@@ -43,7 +43,7 @@ generateroty <- function(angley)
 #'
 rotatedata <- function(mydata, referencedata, v1, v2)
 {
-  require('subplex')
+  library('subplex')
   v1.x <- paste(v1,".Dx", sep = "")
   v1.z <- paste(v1,".Dz", sep = "")
 

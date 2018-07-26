@@ -1,3 +1,74 @@
+#' A class returned by read.mocap function.
+#'
+#' @docType class
+#' @usage read.mocap("file.name.bvh")
+#' @format
+#' a list containing:
+#' \itemize{
+#'   \item Joints - list of joints,
+#'   \item Time - vector with time series,
+#'   \item FrameTime - value of time interval between samples
+#'   \item Frame - and samples count.
+#' }
+#' Each joint is a list that contains:
+#' \itemize{
+#'   \item Nestdepth - level of joint in hierarchy,
+#'   \item Name - name of the joint,
+#'   \item Parent - id of the parent on the list, root joint has parent = -1,
+#'   \item Offset - 3D vector with offset from parent joint,
+#'   \item Nchannels - number of data channels (6 from root, 3 for other or 0 for end point),
+#'   \item Order - rotation order (accepted orders are XYZ, XZY, YXZ, YZX, ZXY or ZYX),
+#'   \item Dxyz - matrix with direct kinematic displacement (calculated from original data),
+#'   \item RawDxyz - matrix with direct kinematic displacement, present only in root joint,
+#'   \item Rxyz - matrix with rotation in degrees of hierarchical kinematic model
+#'   \item Trans - list of rotation - translation matrices that are used to recalculates hierarchical to direct kinematic model.
+#' }
+#'
+#' @keywords class
+#' @examples
+#' #an example BVH file
+#' data("heian.nidan.bvh")
+#' #write file to the disc
+#' f <- file("heian.nidan.bvh")
+#' writeChar(con = f, object = heian.nidan.bvh)
+#' close(f)
+#' #read hierarchical model stored in BVH file
+#' heian.nidan <- read.mocap("heian.nidan.bvh")
+#' summary(heian.nidan)
+mocap <- setClass("mocap")
+
+#' Plots information about number of frames, joints count and joints chierarchy of mocap class.
+#'
+#' @param mocap.data an object of mocap class.
+#'
+#' @examples
+#' data("heian.nidan.bvh")
+#' f <- file("e:\\bvh in r\\gotowy_kod\\output\\heian.nidan.bvh")
+#' writeChar(con = f, object = heian.nidan.bvh)
+#' close(f)
+#' #read hierarchical model stored in hierarchical BVH file
+#' heian.nidan <- read.mocap("e:\\bvh in r\\gotowy_kod\\output\\heian.nidan.bvh")
+#' summary(heian.nidan)
+summary.mocap <-function(mocap.data)
+{
+  message(paste("Frames count:", heian.nidan$skeleton$Frames))
+  message(paste("Joints count:", length(heian.nidan$skeleton$Joints)))
+  message("Joints hierarchy:")
+  for (a in 1:length(heian.nidan$skeleton$Joints))
+  {
+    tabs <- ""
+    if (heian.nidan$skeleton$Joints[[a]]$Nestdepth - 1 > 0)
+    {
+      tabs <- ""
+      for (b in 1:(heian.nidan$skeleton$Joints[[a]]$Nestdepth - 1))
+           tabs <- paste(tabs,"  ", sep="")
+      tabs <- paste(tabs,"+-> ", sep="")
+    }
+    message(paste(tabs, heian.nidan$skeleton$Joints[[a]]$Name, sep = ""))
+  }
+}
+
+
 #' A raw bvh file to be saved on disc (Shotokan Karate kata Heian Nidan).
 #'
 #' @docType data
@@ -240,26 +311,7 @@ transformation_matrix <- function(disp, rxyz, order)
 #' "Motion Capture File Formats Explained" by M. Meredith S. Maddock, doi: 10.1.1.103.2097.
 #' @param filepath A path to BVH file.
 #'
-#' @return a list containing:
-#' \itemize{
-#'   \item Joints - list of joints,
-#'   \item Time - vector with time series,
-#'   \item FrameTime - value of time interval between samples
-#'   \item Frame - and samples count.
-#' }
-#' Each joint is a list that contains:
-#' \itemize{
-#'   \item Nestdepth - level of joint in hierarchy,
-#'   \item Name - name of the joint,
-#'   \item Parent - id of the parent on the list, root joint has parent = -1,
-#'   \item Offset - 3D vector with offset from parent joint,
-#'   \item Nchannels - number of data channels (6 from root, 3 for other or 0 for end point),
-#'   \item Order - rotation order (accepted orders are XYZ, XZY, YXZ, YZX, ZXY or ZYX),
-#'   \item Dxyz - matrix with direct kinematic displacement (calculated from original data),
-#'   \item RawDxyz - matrix with direct kinematic displacement, present only in root joint,
-#'   \item Rxyz - matrix with rotation in degrees of hierarchical kinematic model
-#'   \item Trans - list of rotation - translation matrices that are used to recalculates hierarchical to direct kinematic model.
-#' }
+#' @return an object of mocap class.
 #'
 #' @examples
 #' #an example BVH file
@@ -583,7 +635,7 @@ read.bvh <- function(filepath)
 #'
 #' This function makes calculations based on hierarchical kinematic data in input list (input.skeleton). It does not use Dxyz from input.skeleton.
 #'
-#' @param input.skeleton list in the same format as one generated with read.bvh or read.mocap function.
+#' @param input.skeleton list in the same format as one generated with read.mocap function.
 #'
 #' @return data frame with direct kinematic model. Names of the columns are the same as in input.skeleton.
 #'
@@ -704,7 +756,7 @@ hierarchical.to.direct.kinematic <- function(input.skeleton)
       }
     }
   }
-  df <- bvh.to.csv(skeleton, sd = FALSE)
+  df <- bvh.to.df(skeleton, sd = FALSE)
   return(df)
 }
 
@@ -752,9 +804,9 @@ second.derivative <- function(signal)
 #' writeChar(con = f, object = heian.nidan.bvh)
 #' close(f)
 #' #read hierarchical model stored in BVH file
-# heian.nidan <- read.bvh("heian.nidan.bvh")
-# df <- bvh.to.csv(heian.nidan)
-bvh.to.csv <- function(skeleton, sd = TRUE)
+#' heian.nidan <- read.bvh("heian.nidan.bvh")
+#' df <- bvh.to.df(heian.nidan)
+bvh.to.df <- function(skeleton, sd = TRUE)
 {
   dataframe <- data.frame(Time = skeleton$Time)
   for (b in 1:length(skeleton$Joints))
@@ -822,7 +874,7 @@ set.data.frame <- function(skel, df)
 
 #' This function reads motion capture file on BVH format.
 #'
-#' It also caluclates direct kinematic from hierarchical kinematic. This function calls read.bvh and bvh.to.csv to generate single object of mocap class. See documentation for those two functions.
+#' It also caluclates direct kinematic from hierarchical kinematic. This function calls read.bvh and bvh.to.df to generate single object of mocap class. See documentation for those two functions.
 #'
 #' @param filepath path to a file.
 #'
@@ -836,10 +888,11 @@ set.data.frame <- function(skel, df)
 #' close(f)
 #' #read hierarchical model stored in hierarchical BVH file
 #' heian.nidan <- read.mocap("heian.nidan.bvh")
+#' summary(heian.nidan)
 read.mocap <- function(filepath)
 {
   ll <- read.bvh(filepath)
-  df <- bvh.to.csv(ll)
+  df <- bvh.to.df(ll)
   returndata <- list(skeleton = ll, data.frame = df)
   class(returndata) <- "mocap"
   return (returndata)
@@ -854,7 +907,7 @@ sphere.f <- function(x0 = 0, y0 = 0, z0 = 0, r = 1, n = 101, alpha = 1, ...){
 }
 
 #helper function for printing mocap data
-print.frame <- function(obj, frame = 1, my.color = "green", alpha = 0.05, spheres = FALSE, df = NULL)
+print.frame <- function(obj, frame = 1, my.color = "green", alpha = 0.05, spheres = FALSE, df = NULL, print.text = FALSE)
 {
   if (frame > nrow(obj$data.frame))
   {
@@ -905,9 +958,30 @@ print.frame <- function(obj, frame = 1, my.color = "green", alpha = 0.05, sphere
       #        y = c(obj$skeleton$Joints[[a]]$Dxyz[frame,2],obj$skeleton$Joints[[parent]]$Dxyz[frame,2]),
       #        z = c(obj$skeleton$Joints[[a]]$Dxyz[frame,3],obj$skeleton$Joints[[parent]]$Dxyz[frame,3]),  color ="green")
       if (spheres)
+      {
         sphere.f(x = x.a, y = y.a, z = z.a, r=5, n=31, radius = 1, color = my.color, alpha = alpha)
+      }
+      if (print.text)
+      {
+        rgl.texts(x = (x.a + 5), y = (y.a + 5), z = (z.a + 5), obj$skeleton$Joints[[a]]$Name)
+      }
     }
 
+  }
+  if (spheres)
+  {
+    x.a <- obj$data.frame[frame,paste(obj$skeleton$Joints[[1]]$Name, ".Dx", sep = "")]
+    y.a <- obj$data.frame[frame,paste(obj$skeleton$Joints[[1]]$Name, ".Dy", sep = "")]
+    z.a <- obj$data.frame[frame,paste(obj$skeleton$Joints[[1]]$Name, ".Dz", sep = "")]
+
+    sphere.f(x = x.a, y = y.a, z = z.a, r=5, n=31, radius = 1, color = my.color, alpha = alpha)
+  }
+  if (print.text)
+  {
+    x.a <- obj$data.frame[frame,paste(obj$skeleton$Joints[[1]]$Name, ".Dx", sep = "")]
+    y.a <- obj$data.frame[frame,paste(obj$skeleton$Joints[[1]]$Name, ".Dy", sep = "")]
+    z.a <- obj$data.frame[frame,paste(obj$skeleton$Joints[[1]]$Name, ".Dz", sep = "")]
+    rgl.texts(x = (x.a + 5), y = (y.a + 5), z = (z.a + 5), obj$skeleton$Joints[[1]]$Name)
   }
 }
 
@@ -922,12 +996,13 @@ print.frame <- function(obj, frame = 1, my.color = "green", alpha = 0.05, sphere
 #' @param alpha value of alpha channel of the plot (0 is 100\% transparency, 1 is no transparency, default is alpha = 0.05).
 #' @param spheres if TRUE, position of body joints will be marked as spheres (default is spheres = FALSE).
 #' @param append if FALSE (default is append = FALSE) a new plot is generated, if TRUE a plot is drawn over open rgl window).
+#' @param print.text if TRUE (default is append = FALSE) plots name of the joints.
 #'
 #' @examples
 #' data("right.arm.motion.1")
 #' plot(right.arm.motion.1, frame = 1, my.color = "white", alpha = 1, spheres = TRUE)
-#' plot(right.arm.motion.1, frames.fraction = 0.5, my.color = "white", alpha = 1, spheres = FALSE)
-plot.mocap <- function(obj, frame = 0, my.color = "green", frames.fraction = 0.1, alpha = 0.05, spheres = FALSE, append = FALSE){
+#' plot(right.arm.motion.1, frames.fraction = 0.5, my.color = "white", alpha = 1, spheres = FALSE, print.text = TRUE)
+plot.mocap <- function(obj, frame = 0, my.color = "green", frames.fraction = 0.1, alpha = 0.05, spheres = FALSE, append = FALSE, print.text = FALSE){
   library(rgl)
   if (!append)
   {
@@ -935,7 +1010,7 @@ plot.mocap <- function(obj, frame = 0, my.color = "green", frames.fraction = 0.1
   }
   if (frame > 0)
   {
-    print.frame(obj, frame, my.color = my.color, alpha = alpha, spheres = spheres)
+    print.frame(obj, frame, my.color = my.color, alpha = alpha, spheres = spheres, print.text = print.text)
   }
   else {
 
@@ -944,7 +1019,7 @@ plot.mocap <- function(obj, frame = 0, my.color = "green", frames.fraction = 0.1
 
     #for (a in 1:obj$skeleton$Frames)
     for (a in ind)
-      print.frame(obj, a, my.color = my.color, alpha = alpha, spheres = spheres)
+      print.frame(obj, a, my.color = my.color, alpha = alpha, spheres = spheres, print.text = print.text)
   }
   axes3d(col="white", alpha = 1)
 }
@@ -1018,7 +1093,7 @@ calculate.kinematic <- function(dd, LeftFoot = "LeftFoot", RightFoot = "RightFoo
   if (!is.null(bodypartname))
   {
     window_size <- 0.05
-    require(smoother)
+    library(smoother)
 
     for (a in 1:(length(dd$RightFoot.Dx) - 1))
     {
@@ -1038,7 +1113,7 @@ calculate.kinematic <- function(dd, LeftFoot = "LeftFoot", RightFoot = "RightFoo
 
   window_size <- 100 / length(dd[,paste(RightFoot,".ax", sep ="")])
 
-  require(smoother)
+  library(smoother)
 
   zzR <- smth(sqrt(dd[,paste(RightFoot,".ax", sep ="")] ^ 2 + dd[,paste(RightFoot,".ay", sep ="")] ^ 2 + dd[,paste(RightFoot,".az", sep ="")] ^ 2),window = window_size,method = "gaussian") #SMOOTHING
   zzL <- smth(sqrt(dd[,paste(LeftFoot,".ax", sep ="")] ^ 2 + dd[,paste(LeftFoot,".ay", sep ="")] ^ 2 + dd[,paste(LeftFoot,".az", sep ="")] ^ 2),window = window_size,method = "gaussian") #SMOOTHING
@@ -1048,8 +1123,8 @@ calculate.kinematic <- function(dd, LeftFoot = "LeftFoot", RightFoot = "RightFoo
 
   if (show.plot)
   {
-    plot(zzR, type = 'n', xlab = "Time [ms]", ylab="Acceleration [g]")
-    title(paste("Acceleration plot of", plot.title))
+    plot(zzR, type = 'n', xlab = "Time [ms]", ylab="Acceleration magnitude [g]")
+    title(paste("Acceleration magnitude plot of", plot.title))
     lines(zzR, col="red")
     lines(zzL, col="blue")
     legend("topright", legend=c("Right foot", "Left foot"), col=c("red", "blue"), lty=c(1,1))
@@ -1070,11 +1145,6 @@ calculate.kinematic <- function(dd, LeftFoot = "LeftFoot", RightFoot = "RightFoo
     }
   }
 
-  #calculate.kinematicCorrection(dd)
-
-  #window_size <- 100 / length(dd$RightFoot.ax)
-
-  #require(smoother)
   zzR <- smth(dd[,paste(RightFoot,".Dy", sep ="")],window = window_size,method = "gaussian") #SMOOTHING
   if (show.plot)
   {
@@ -1127,7 +1197,7 @@ calculate.kinematic <- function(dd, LeftFoot = "LeftFoot", RightFoot = "RightFoo
   if (show.plot)
   {
     plot(zzL, type = 'n', xlab = "Time [ms]", ylab="Y [cm]")
-    title(paste("Vertical coordinates of feet after positioning with the ground of", plot.title))
+    title(paste("Vertical coordinates of feet after positioning\r\nwith the ground of", plot.title))
     lines(zzR, col="red")
     zzL <- smth(dd[,paste(LeftFoot,".Dy", sep ="")],window = window_size,method = "gaussian") #SMOOTHING
     lines(zzL, col="blue")
@@ -1290,18 +1360,48 @@ write.bvh <- function(skeleton.helper, path)
 }
 
 
-rotation = function(x,y){
-  u=x/sqrt(sum(x^2))
+#' This function returns n by n rotation matrix that align vector x onto y.
+#'
+#' Bth vector x and y has to be normalized and has to be same length.
+#'
+#' @param x vector to be rotated (has to be normalized).
+#' @param y reference vector (has to be normalized).
+#'
+#' @return n x n rotation matrix.
+#'
+#' @examples
+#' x <- vector.to.unit(c(1,0,0))
+#' y <- vector.to.unit(c(0,1,0))
+#' Rx2y <- rotation.matrix.between.vectors(x, y)
+#' x %*% Rx2y
+#' y
+#' x <- vector.to.unit(c(5,0,2,4,6))
+#' y <- vector.to.unit(c(0,1,0,8,-5))
+#' Rx2y <- rotation.matrix.between.vectors(x, y)
+#' x %*% Rx2y
+#' y
+#' x <- vector.to.unit(c(8,0,0))
+#' y <- vector.to.unit(c(2,0,0))
+#' Rx2y <- rotation.matrix.between.vectors(x, y)
+#' x %*% Rx2y
+#' y
+rotation.matrix.between.vectors <- function(x,y){
+  a=x/sqrt(sum(x^2))
 
-  v=y-sum(u*y)*u
-  v=v/sqrt(sum(v^2))
+  b=y-sum(a*y)*a
+  b=b/sqrt(sum(b^2))
 
   cost=sum(x*y)/sqrt(sum(x^2))/sqrt(sum(y^2))
 
   sint=sqrt(1-cost^2);
 
-  diag(length(x)) - u %*% t(u) - v %*% t(v) +
-    cbind(u,v) %*% matrix(c(cost,-sint,sint,cost), 2) %*% t(cbind(u,v))
+  r.mat<- diag(length(x)) - a %*% t(a) - b %*% t(b) +
+    cbind(a,b) %*% matrix(c(cost,-sint,sint,cost), 2) %*% t(cbind(a,b))
+  if (anyNA(r.mat))
+  {
+    r.mat <- diag(length(x))
+  }
+ return(r.mat)
 }
 
 
@@ -1460,7 +1560,7 @@ generate.first.frame <- function(input.skeleton, Nframes = 1, FrameTime = 0.01)
 
 
   skeleton$Frames <- Nframes
-  df <- bvh.to.csv(skeleton)
+  df <- bvh.to.df(skeleton)
   returndata <- list(skeleton = skeleton, data.frame = df)
   class(returndata) <- "mocap"
 
@@ -1573,7 +1673,7 @@ generate.single.frame <- function(input.skeleton, index =1)
 
 
   #skeleton$Frames <- 1
-  df <- bvh.to.csv(skeleton)
+  df <- bvh.to.df(skeleton)
   returndata <- list(skeleton = skeleton, data.frame = df)
   class(returndata) <- "mocap"
 

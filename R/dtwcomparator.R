@@ -259,7 +259,7 @@ plotsmoothingresults <- function(smoothingresults, plottitle, plotifnoextreams =
     plot(smoothingresults$data, xlab = "Time [10^-100 s]", ylab = ylab, col = 'black', type='l',
 	ylim = c(min(smoothingresults$data), max(smoothingresults$data) * 1.5))
 
-
+    lines(smoothingresults$smoothdata, col = 'purple', lty = 2)
     title(main = plottitle)
     #lines(smoothingresults$data , col = "black")
     if (length(smoothingresults$resultsList) > 0)
@@ -283,7 +283,9 @@ plotsmoothingresults <- function(smoothingresults, plottitle, plotifnoextreams =
           }
         }
       }
-    legend(x= legenPosition, y=max(smoothingresults$data) * 1.5, legend=c("Original", "Maxima over treshold", "ROI"), col=c("black", 'red', "blue"), lty=c(1,1,1), cex=0.8)
+    legend(x= legenPosition, y=max(smoothingresults$data) * 1.5, legend=c("Original", "Smoothed","Maxima over treshold", "ROI"), col=c("black", "purple",'red', "blue"), lty=c(1,2,1), cex=0.8)
+    #legend(x= "topright", y=max(ref.res$data) * 1.5, legend=c("Original", "Smoothed", "Maxima", "Maxima over treshold"), col=c("black", "purple", 'cyan','red'), lty=c(1,2,1), cex=0.8)
+
   }
 }
 
@@ -401,7 +403,7 @@ rglplotanalyzedata <- function(refdatakinematic, inputdataalignmentkinematic, xx
 scatterplotanalyzedta <- function(x1, y1, z1, x2, y2, z2, path1, path2)
 {
 
-  require('scatterplot3d')
+  library('scatterplot3d')
   color <- rep("green", length(x1))
 
   #s3d <- scatterplot3d(x1, z1, y1, color, type='l', pch=20, main="DTW signal mapping of RightThigh roation", angle=90, xlim=c(-1, 1), ylim=c(-1, 0), zlim=c(-1, -0.3),
@@ -431,7 +433,7 @@ scatterplotanalyzedta <- function(x1, y1, z1, x2, y2, z2, path1, path2)
 #helper function
 smothdata <- function(dd, smoothSize = 0.2, smoothSizeHelper = 0.1)
 {
-  require(smoother)
+  library(smoother)
   #smoothSize <- 0.1
   #smoothSize <- 0.2
   #smoothSizeHelper <- 0.1
@@ -781,6 +783,8 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #' @param extremumtreshold treshold from range [0,1], that is used to remove local extreme, which realtive value is below extremumtreshold (default value is extremumtreshold=0.66).
 #' @param smoothSize size of the gaussian smoothing window. Deafult value is smoothSize = 0.1.
 #'
+#' @return a list containing data.configuration parameters plus algorihm results
+#'
 #' @examples
 #' ########################
 #' #analyze upper body data
@@ -798,7 +802,6 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #' inputdataalignmentkinematic <- calculate.kinematic(inputdataalignment, bodypartname = "LeftShoulder")
 #' refdatakinematic <- calculate.kinematic(refdata, bodypartname = "LeftShoulder")
 #' inputdataalignmentkinematic <- aligninputandrefdata(inputdataalignmentkinematic, refdatakinematic, limbname = "LeftShoulder")
-#' analyzerange <- ceiling(nrow(inputdataalignment) * smoothSize * 1) #sprawdzia, jaki powinien bya ten przedzia3!
 #'
 #' data.configuration <- list()
 #' data.configuration[[1]] <- list(x1 = vector.to.list(refdatakinematic, "RightHand"),
@@ -844,7 +847,7 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #'    plotRGL = NULL,
 #'    skeleton = NULL)
 #'
-#' analyze.mocap(data.configuration,
+#' res <- analyze.mocap(data.configuration,
 #' refdatakinematic,
 #' inputdataalignmentkinematic,
 #' extremumtreshold,
@@ -865,7 +868,6 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #' inputdataalignmentkinematic <- calculate.kinematic(inputdataalignment, bodypartname = "RightFoot")
 #' refdatakinematic <- calculate.kinematic(refdata, bodypartname = "RightFoot")
 #' inputdataalignmentkinematic <- aligninputandrefdata(inputdataalignmentkinematic, refdatakinematic, limbname = "RightFoot")
-#' analyzerange <- ceiling(nrow(inputdataalignment) * smoothSize * 1) #sprawdzia, jaki powinien bya ten przedzia3!
 #'
 #' data.configuration <- list()
 #' data.configuration[[1]] <- list(x1 = vector.to.list(refdatakinematic, "LeftFoot"),
@@ -907,7 +909,7 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #'   legend = "Z angle between LeftThigh and LeftLeg",
 #'   plotRGL = NULL)
 #'
-#' analyze.mocap(data.configuration,
+#' res <- analyze.mocap(data.configuration,
 #' refdatakinematic,
 #' inputdataalignmentkinematic,
 #' extremumtreshold,
@@ -915,11 +917,16 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 
 analyze.mocap <- function(data.configuration, ref.d = NULL, in.d = NULL, extremumtreshold = 0.66, smoothSize = 0.1)
 {
+
+  data.configuration.ret <- data.configuration
   for (a in 1:length(data.configuration))
   {
     dc <- data.configuration[[a]]
     x1 <- dc$x1
     x2 <- dc$x2
+
+    analyzerange <- ceiling(length(dc$x2) * smoothSize * 1)
+
     FUN <- dc$FUN
     ylab <- dc$ylab
     legend <- dc$legend
@@ -935,16 +942,21 @@ analyze.mocap <- function(data.configuration, ref.d = NULL, in.d = NULL, extremu
       plot(ref.res$path1, ref.res$path2, xlab = "Reference signal [sample id]", ylab = "Input signal [sample id]", main ="DTW alignment", type='l')
 
 
-      plot(ref.res$data, xlab = "Time [10^-100 s]", ylab =ylab, main ="DTW alignment function", col = 'black', type='l', ylim = c(min(ref.res$data), max(ref.res$data) * 1.5))
+      plot(ref.res$data, xlab = "Time [10^-100 s]", ylab =ylab, main =paste("DTWaf of ", legend, " trajectory analysis", sep = ""), col = 'black', type='l', ylim = c(min(ref.res$data), max(ref.res$data) * 1.5))
       lines(ref.res$smoothdata, col = 'purple', lty = 2)
       #points(footddf$smoothdata, col = 'blue')
-      for (a in 1:length(ref.res$extremumid))
+
+
+      dc$results <- ref.res
+      dc$tresholded.results <- dftoanalyze
+
+      for (b in 1:length(ref.res$extremumid))
       {
-        points(ref.res$extremumid[a], ref.res$smoothdata[ref.res$extremumid[a]], col = "cyan",pch = 1, cex = 2, lwd=3)
+        points(ref.res$extremumid[b], ref.res$smoothdata[ref.res$extremumid[b]], col = "cyan",pch = 1, cex = 2, lwd=3)
       }
-      for (a in 1:length(dftoanalyze$extremumid))
+      for (b in 1:length(dftoanalyze$extremumid))
       {
-        points(dftoanalyze$extremumid[a], dftoanalyze$smoothdata[dftoanalyze$extremumid[a]], col = "red",pch = 4, cex = 2, lwd=3)
+        points(dftoanalyze$extremumid[b], dftoanalyze$smoothdata[dftoanalyze$extremumid[b]], col = "red",pch = 4, cex = 2, lwd=3)
       }
       legend(x= "topright", y=max(ref.res$data) * 1.5, legend=c("Original", "Smoothed", "Maxima", "Maxima over treshold"), col=c("black", "purple", 'cyan','red'), lty=c(1,2,1), cex=0.8)
 
@@ -954,17 +966,22 @@ analyze.mocap <- function(data.configuration, ref.d = NULL, in.d = NULL, extremu
         rglplotanalyzedata(ref.d, in.d, x1, x2, ref.res$path1, ref.res$path2,resultdata =   dftoanalyze, whattodraw = plotRGL, skeleton = skeleton)
       }
 
-      plotsmoothingresults(dftoanalyze,paste("DTWaf of", legend, "trajectory analysis"), plotifnoextreams = TRUE, plotsmoothed = TRUE)
+      #plotsmoothingresults(dftoanalyze,paste("DTWaf of", legend, "trajectory analysis"), plotifnoextreams = TRUE, plotsmoothed = FALSE)
 
+      data.configuration.ret[[a]] <- dc
     } else
     {
-      res <-analyzedta(x1, x2, FUN=FUN, smoothSize = smoothSize,
+      res.original <-analyzedta(x1, x2, FUN=FUN, smoothSize = smoothSize,
                        path1 = ref.res$path1, path2 = ref.res$path2, extremumtreshold = extremumtreshold)
 
-      res <- tresholdresults(res, extremumtreshold)
-      plotsmoothingresults(alignextremum(dftoanalyze, res, analyzerange),paste("DTWaf of ", legend, " trajectory analysis", sep = ""), plotifnoextreams = TRUE, plotsmoothed = TRUE, ylab = ylab)
+      res <- tresholdresults(res.original, extremumtreshold)
+      plotsmoothingresults(alignextremum(dftoanalyze, res, analyzerange),paste("DTWaf of ", legend, " trajectory analysis", sep = ""), plotifnoextreams = TRUE, plotsmoothed = FALSE, ylab = ylab)
 
+      dc$results <- res.original
+      dc$tresholded.results <- res
+      data.configuration.ret[[a]] <- dc
     }
   }
+  return(data.configuration.ret)
 }
 

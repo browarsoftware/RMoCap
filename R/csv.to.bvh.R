@@ -18,8 +18,14 @@
 #'   input.skeleton <- header.mocap
 #'
 #'   df.to.save <- heian.yondan[1:300,]
-#'   first.frame <- csv.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, debug.messages = TRUE)
+#'   first.frame <- df.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, debug.messages = TRUE)
 #'   write.bvh(first.frame, "e:\\bvh in r\\gotowy_kod\\output\\heian.yondan.frames300.bvh")
+#'
+#'   plot(first.frame$skeleton$Joints[[1]]$Rxyz[,1], type = "l", col = "black", xlab = "sample", ylab = "angle (degrees)")
+#'   lines(first.frame$skeleton$Joints[[1]]$Rxyz[,2], type = "l", col = "red")
+#'   lines(first.frame$skeleton$Joints[[1]]$Rxyz[,3], type = "l", col = "blue")
+#'   legend("bottomright", legend=c("X axis rotation", "Y axis rotation", "Z axis rotation"), col=c("black", "red", "blue"), lty = 1)
+#'   title("Hips rotation data")
 #'
 #'   plot(df.to.save[,2], ylab = "Displacement [cm]", xlab = "Time [10^-2 sec]", pch = 1)
 #'   for (a in 1:ncol(df.to.save))
@@ -30,10 +36,10 @@
 #'   legend("bottomright", legend=c("Original", "Jitter"), col=c("black", "red"), pch = c(1,2))
 #'   title("Example channel of MoCap data")
 #'
-#'   first.frame <- csv.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, debug.messages = TRUE)
+#'   first.frame <- df.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, debug.messages = TRUE)
 #'
 #'   #plot rotation data
-#'   plot(first.frame$skeleton$Joints[[1]]$Rxyz[,1], type = "l", col = "black")
+#'   plot(first.frame$skeleton$Joints[[1]]$Rxyz[,1], type = "l", col = "black", xlab = "sample", ylab = "angle (degrees)")
 #'   lines(first.frame$skeleton$Joints[[1]]$Rxyz[,2], type = "l", col = "red")
 #'   lines(first.frame$skeleton$Joints[[1]]$Rxyz[,3], type = "l", col = "blue")
 #'   legend("bottomright", legend=c("X axis rotation", "Y axis rotation", "Z axis rotation"), col=c("black", "red", "blue"), lty = 1)
@@ -42,8 +48,8 @@
 #'   write.bvh(first.frame, "e:\\bvh in r\\gotowy_kod\\output\\jitter.heian.yondan.frames300.bvh")
 #'
 #'   df.to.save <- heian.yondan[1000:1001,]
-#'   foo <- csv.to.bvh(input.skeleton, df.to.save, plot.me = TRUE, debug.messages = FALSE, frame.id = 1)
-csv.to.bvh <-function(input.skeleton, df.to.save, plot.me = FALSE, frame.id = -1, debug.messages = FALSE)
+#'   foo <- df.to.bvh(input.skeleton, df.to.save, plot.me = TRUE, debug.messages = FALSE, frame.id = 1)
+df.to.bvh <-function(input.skeleton, df.to.save, plot.me = FALSE, frame.id = -1, debug.messages = FALSE)
 {
   for (a in 1:length(input.skeleton$skeleton$Joints))
   {
@@ -146,14 +152,14 @@ csv.to.bvh <-function(input.skeleton, df.to.save, plot.me = FALSE, frame.id = -1
     tomapowacu <- vector.to.unit(tomapowac)
 
 
-    Rx2y = rotation(tomapowacu, mapu)
+    Rx2y = rotation.matrix.between.vectors(tomapowacu, mapu)
     if (anyNA(Rx2y))
     {
       Rx2y <- matrix(c(1,0,0,0,1,0,0,0,1),nrow = 3, ncol = 3)
     }
     tomapowacu %*% Rx2y
 
-    require(RSpincalc)
+    library(RSpincalc)
 
     #lewe biodro
     ea <- DCM2EA(Rx2y, 'zyx') * 180 / pi
@@ -193,7 +199,7 @@ csv.to.bvh <-function(input.skeleton, df.to.save, plot.me = FALSE, frame.id = -1
 
 
 
-    require('subplex')
+    library('subplex')
     euc.dist <- function(x1, x2) sqrt(sum((x1 - x2) ^ 2))
 
     optimizeangle <- function(x)
@@ -326,7 +332,7 @@ csv.to.bvh <-function(input.skeleton, df.to.save, plot.me = FALSE, frame.id = -1
       #first.frame$skeleton$Joints[[1]]$Trans[[1]][1:3,1:3] %*% solve(a=first.frame$skeleton$Joints[[1]]$Trans[[1]][1:3,1:3])
 
 
-      Rx2y = rotation(tomapowacu, mapu)
+      Rx2y = rotation.matrix.between.vectors(tomapowacu, mapu)
       if (anyNA(Rx2y))
       {
         Rx2y <- matrix(c(1,0,0,0,1,0,0,0,1),nrow = 3, ncol = 3)
@@ -335,7 +341,7 @@ csv.to.bvh <-function(input.skeleton, df.to.save, plot.me = FALSE, frame.id = -1
 
       #Rx2y <- Rx2y %*% rp
 
-      require(RSpincalc)
+      library(RSpincalc)
 
       #lewe biodro
       ea <- DCM2EA(Rx2y, 'zyx') * 180 / pi
