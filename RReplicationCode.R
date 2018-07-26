@@ -2,11 +2,11 @@
 #R replication code
 ######################################
 
-if (!require(RMoCap))
+if (!require("RMoCap"))
 {
-	if (!require(RMocap))
+	if (!require("devtools"))
 	{
-	install.packages("devtools") # if you have not installed "devtools" package
+		install.packages("devtools") # if you have not installed "devtools" package
 	}
 	devtools::install_github("browarsoftware/RMoCap")
 }
