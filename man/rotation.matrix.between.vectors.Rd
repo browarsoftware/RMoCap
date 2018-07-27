@@ -15,7 +15,7 @@ rotation.matrix.between.vectors(x, y)
 n x n rotation matrix.
 }
 \description{
-Bth vector x and y has to be normalized and has to be same length.
+Both vector x and y has to be normalized.
 }
 \examples{
 x <- vector.to.unit(c(1,0,0))

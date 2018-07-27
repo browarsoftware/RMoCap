@@ -9,8 +9,8 @@
 \itemize{
   \item Joints - list of joints,
   \item Time - vector with time series,
-  \item FrameTime - value of time interval between samples
-  \item Frame - and samples count.
+  \item FrameTime - value of time interval between samples,
+  \item Frame - samples count.
 }
 Each joint is a list that contains:
 \itemize{
@@ -22,7 +22,7 @@ Each joint is a list that contains:
   \item Order - rotation order (accepted orders are XYZ, XZY, YXZ, YZX, ZXY or ZYX),
   \item Dxyz - matrix with direct kinematic displacement (calculated from original data),
   \item RawDxyz - matrix with direct kinematic displacement, present only in root joint,
-  \item Rxyz - matrix with rotation in degrees of hierarchical kinematic model
+  \item Rxyz - matrix with rotation in degrees of hierarchical kinematic model,
   \item Trans - list of rotation - translation matrices that are used to recalculates hierarchical to direct kinematic model.
 }}
 \usage{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/bvhutils.R
 \name{vector.to.angles.frame.list}
 \alias{vector.to.angles.frame.list}
-\title{This function genereates list of angles between vector and coordinates frame.}
+\title{This function generates list of angles between vector and coordinates frame.}
 \usage{
 vector.to.angles.frame.list(dataToCalculate, f1, f2, xt1, xt2)
 }
@@ -21,7 +21,7 @@ vector.to.angles.frame.list(dataToCalculate, f1, f2, xt1, xt2)
 Results are list of vectors defined as follow: (angle(Y, v1), angle(Z, v1), angle(X, v1)).
 }
 \description{
-Vector is defined as v1=(f1-f2). The cordinate frame is:
+Vector is defined as v1=(f1-f2). The coordinate frame is:
 \itemize{
   \item X=(xt1-xt2),
   \item Z=X x (0,1,0),

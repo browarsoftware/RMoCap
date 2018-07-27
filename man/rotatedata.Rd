@@ -2,7 +2,7 @@
 % Please edit documentation in R/rotatedata.R
 \name{rotatedata}
 \alias{rotatedata}
-\title{This function align to data frames that contains mocap data.}
+\title{This function align two data frames that contains mocap data.}
 \usage{
 rotatedata(mydata, referencedata, v1, v2)
 }
@@ -19,9 +19,9 @@ rotatedata(mydata, referencedata, v1, v2)
 mydata rotated by Y axis so that mydata and referencedata faces same direction.
 }
 \description{
-Both data frames need to have two common column groups with names ending Dx and Dz. This function calulates vector vv = v1-v2
-for both data frames (vv.m for mydata and vv.ref for referencedata) and rotates mydata around Y axis in order to minimize euclidean distane between
-vv.m and vv.ref. Minimization is perfomed with simplex method. After this procedure mydata face the same direction as referencdata.
+Both data frames need to have two common column groups with names ending Dx and Dz. This function calculates vector vv = v1-v2
+for both data frames (vv.m for mydata and vv.ref for referencedata) and rotates mydata around Y axis in order to minimize euclidean distance between
+vv.m and vv.ref. Minimization is made with simplex method. After this procedure mydata face the same direction as referencdata.
 This procedure works correctly only if root joint of mocap is stationary.
 }
 \examples{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/bvhutils.R
 \name{vector.to.list}
 \alias{vector.to.list}
-\title{This function genereates list of vectors.}
+\title{This function generates list of vectors.}
 \usage{
 vector.to.list(dataToCalculate, featuresName)
 }

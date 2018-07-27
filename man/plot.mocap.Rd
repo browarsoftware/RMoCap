@@ -15,7 +15,7 @@
 
 \item{my.color}{color of the plot.}
 
-\item{frames.fraction}{if frame = 0 this parameter indicates what fraction of frames should be drawn (default frames.fraction = 0.1 means that 10\% of frames will be ploted).}
+\item{frames.fraction}{if frame = 0 this parameter indicates what fraction of frames should be drawn (default frames.fraction = 0.1 means that 10\% of frames will be plotted).}
 
 \item{alpha}{value of alpha channel of the plot (0 is 100\% transparency, 1 is no transparency, default is alpha = 0.05).}
 
@@ -26,7 +26,7 @@
 \item{print.text}{if TRUE (default is append = FALSE) plots name of the joints.}
 }
 \description{
-This function uses rgl package for 3D visualizations. It creates interactive 3D plots that enables rotation and scalling.
+This function uses rgl package for 3D visualizations. It creates interactive 3D plots that enables rotation and scaling.
 }
 \examples{
 data("right.arm.motion.1")

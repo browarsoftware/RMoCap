@@ -2,7 +2,7 @@
 % Please edit documentation in R/bvhutils.R
 \name{summary.mocap}
 \alias{summary.mocap}
-\title{Plots information about number of frames, joints count and joints chierarchy of mocap class.}
+\title{Plots information about number of frames, joints count and joints hierarchy of mocap class.}
 \usage{
 \method{summary}{mocap}(mocap.data)
 }
@@ -10,7 +10,7 @@
 \item{mocap.data}{an object of mocap class.}
 }
 \description{
-Plots information about number of frames, joints count and joints chierarchy of mocap class.
+Plots information about number of frames, joints count and joints hierarchy of mocap class.
 }
 \examples{
 data("heian.nidan.bvh")

@@ -13,7 +13,7 @@ if (!require("RMoCap"))
 
 #set a working folder when you want to save your data
 path.to.work.folder = "e:\\test\\"
-
+library("RMoCap")
 ######################################
 #Read BVH file (Recalculate hierarchical to direct kinematic model) - Section 2
 ######################################
@@ -127,7 +127,7 @@ inputdata <- right.arm.motion.2$data.frame
 
 #parameters for data analysis, a threshold for maxima 
 #and size of smoothing filter (10% of signal size)
-extremumtreshold <- 0.66
+extremumthreshold <- 0.66
 smoothSize <- 0.1
 
 #rotate inputdata to face the same direction as refdata, 
@@ -194,7 +194,7 @@ data.configuration[[5]] <- list(x1 = x1[[3]],
 res <- analyze.mocap(data.configuration,
 			refdatakinematic,
 			inputdataalignmentkinematic,
-			extremumtreshold,
+			extremumthreshold,
 			smoothSize)
 
 
@@ -209,7 +209,7 @@ data(mawashi.geri.left.2)
 refdata <- mawashi.geri.left.1$data.frame
 inputdata <- mawashi.geri.left.2$data.frame
 
-extremumtreshold <- 0.66
+extremumthreshold <- 0.66
 smoothSize <- 0.1
 
 #rotate inputdata to face the same direction as refdata, 
@@ -268,5 +268,5 @@ data.configuration[[5]] <- list(x1 = x1[[3]],
 res <- analyze.mocap(data.configuration,
 			refdatakinematic,
 			inputdataalignmentkinematic,
-			extremumtreshold,
+			extremumthreshold,
 			smoothSize)

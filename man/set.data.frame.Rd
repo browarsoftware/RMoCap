@@ -2,7 +2,7 @@
 % Please edit documentation in R/bvhutils.R
 \name{set.data.frame}
 \alias{set.data.frame}
-\title{Assign data frame to objcet of mocap class.}
+\title{Assign data frame to object of mocap class.}
 \usage{
 set.data.frame(skel, df)
 }
@@ -15,7 +15,7 @@ set.data.frame(skel, df)
 object of mocap class with df assigned.
 }
 \description{
-This function does not recalculate chierarchical kinematic model in skeleton.
+This function does not recalculate hierarchical kinematic model in skeleton.
 }
 \examples{
 data("header.mocap")

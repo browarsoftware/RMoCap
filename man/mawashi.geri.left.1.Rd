@@ -3,12 +3,12 @@
 \docType{data}
 \name{mawashi.geri.left.1}
 \alias{mawashi.geri.left.1}
-\title{An object of class mocap that contains karate kick nawashi geri.}
+\title{An object of class mocap that contains karate kick mawashi geri.}
 \format{An object of mocap class.}
 \usage{
 data("mawashi.geri.left.1")
 }
 \description{
-An object of class mocap that contains karate kick nawashi geri.
+An object of class mocap that contains karate kick mawashi geri.
 }
 \keyword{datasets}

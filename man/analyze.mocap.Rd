@@ -2,19 +2,19 @@
 % Please edit documentation in R/dtwcomparator.R
 \name{analyze.mocap}
 \alias{analyze.mocap}
-\title{This function perfomrs motion capture dat analysis based on Dynamic Time Warping.}
+\title{This function performs motion capture data analysis based on Dynamic Time Warping.}
 \usage{
 analyze.mocap(data.configuration, ref.d = NULL, in.d = NULL,
-  extremumtreshold = 0.66, smoothSize = 0.1)
+  extremumthreshold = 0.66, smoothSize = 0.1)
 }
 \arguments{
-\item{data.configuration}{a list contaning configuration for the algorithm. Eachelement of the list is a list with following elements (all elements are obligatory):
+\item{data.configuration}{a list containing configuration for the algorithm. Each element of the list is a list with following elements (all elements are obligatory):
 \itemize{
 \item x1 - reference signal for DTW (vectors list),
 \item x2 - second signal for DTW (vectors list),
-\item FUN - distance function for DTW, use euc.dist or euc.dist1d, however you can define any function that can opperates on x1 and x2,
+\item FUN - distance function for DTW, use euc.dist or euc.dist1d, however you can define any function that can operates on x1 and x2,
 \item ylab - label on Y axis of the results plot,
-\item legend - part of the legend sting over plots,
+\item legend - part of the legend over plots,
 \item plotRGL - name of the body joint for which DTW alignment of x1 and x2 will be drawn. It will be 3D rgl plot. If plotRGL = NULL plot will not be drawn.
 \item skeleton - object of class mocap. It is used to get joints relations while plotting RGL plot.
 }}
@@ -23,9 +23,9 @@ analyze.mocap(data.configuration, ref.d = NULL, in.d = NULL,
 
 \item{in.d}{data frame with reference mocap data (default is in.d=NULL). It is used to get joints relations while plotting RGL plot.}
 
-\item{extremumtreshold}{treshold from range [0,1], that is used to remove local extreme, which realtive value is below extremumtreshold (default value is extremumtreshold=0.66).}
+\item{extremumthreshold}{threshold from range [0,1], that is used to remove local extreme, which relative value is below extremumthreshold (default value is extremumthreshold=0.66).}
 
-\item{smoothSize}{size of the gaussian smoothing window. Deafult value is smoothSize = 0.1.}
+\item{smoothSize}{size of the Gaussian smoothing window. Default value is smoothSize = 0.1.}
 }
 \value{
 a list containing data.configuration parameters plus algorihm results
@@ -34,9 +34,9 @@ a list containing data.configuration parameters plus algorihm results
 This procedure detects highest differences between reference and input mocap recording. Analysis goes as follows:
 \itemize{
 \item Perform DTW on x1 and x2 from list at index 1. Plot DTW alignment This alignment will be used in aligning all other signals. Plot distance between x1 and x2 after alignment and find local maxima in this plot.
-In following analysis only maxima with relative value above treshold will be used.
+In following analysis only maxima with relative value above threshold will be used.
 \item perform DTW alignment for each other element from the data.configuration list, however use the alignment function from first step. Maxima are detected in the same procedure as above, however we take into account only those
-of them, that are close enough to maxims from first step of analysis.
+of them, that are close enough to maxima from first step of analysis.
 }
 }
 \examples{
@@ -49,7 +49,7 @@ data(right.arm.motion.2)
 refdata <- right.arm.motion.1$data.frame
 inputdata <- right.arm.motion.2$data.frame
 
-extremumtreshold <- 0.66
+extremumthreshold <- 0.66
 smoothSize <- 0.1
 
 inputdataalignment <- rotatedata(inputdata, refdata, "LeftShoulder","RightShoulder")
@@ -104,7 +104,7 @@ data.configuration[[5]] <- list(x1 = x1[[3]],
 res <- analyze.mocap(data.configuration,
 refdatakinematic,
 inputdataalignmentkinematic,
-extremumtreshold,
+extremumthreshold,
 smoothSize)
 
 ########################
@@ -115,7 +115,7 @@ data(mawashi.geri.left.2)
 
 refdata <- mawashi.geri.left.1$data.frame
 inputdata <- mawashi.geri.left.2$data.frame
-extremumtreshold <- 0.66
+extremumthreshold <- 0.66
 smoothSize <- 0.1
 
 inputdataalignment <- rotatedata(inputdata, refdata, "LeftThigh","RightThigh")
@@ -166,6 +166,6 @@ data.configuration[[5]] <- list(x1 = x1[[3]],
 res <- analyze.mocap(data.configuration,
 refdatakinematic,
 inputdataalignmentkinematic,
-extremumtreshold,
+extremumthreshold,
 smoothSize)
 }

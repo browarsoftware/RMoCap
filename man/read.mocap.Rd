@@ -13,7 +13,7 @@ read.mocap(filepath)
 object of mocap class.
 }
 \description{
-It also caluclates direct kinematic from hierarchical kinematic. This function calls read.bvh and bvh.to.df to generate single object of mocap class. See documentation for those two functions.
+It also calculates direct kinematic from hierarchical kinematic. This function calls read.bvh and bvh.to.df to generate single object of mocap class. See documentation for those two functions.
 }
 \examples{
 #an example BVH file

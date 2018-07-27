@@ -36,7 +36,7 @@ calculatenormalizeddistance <- function(path1, path2, signal1, signal2, FUN)
   return (distanceHelper / (length(signal1) + length(signal2)))
 }
 
-#' This function calulcates Euclidean distance between vectors x1 and x2.
+#' This function calculates Euclidean distance between vectors x1 and x2.
 #'
 #' @param x1 first numeric vector.
 #' @param x2 second numeric vector.
@@ -85,12 +85,7 @@ ArgMin3Cmp <- cmpfun(ArgMin3)
 #helper function
 myDTW <- function(FUN,averageS,sequence)
 {
-  #averageS <- rs
-  #sequence <- s1
-
   tupleAssociation <- list();
-  #for (t in 1:length(averageS))
-  #  tupleAssociation[[t]] <- list();
   for (t in 1:length(averageS))
     tupleAssociation[[t]] <- data.frame(v1 = numeric(),
                                         v2 = numeric(),
@@ -98,20 +93,12 @@ myDTW <- function(FUN,averageS,sequence)
                                         v4 = numeric(),
                                         stringsAsFactors = FALSE);
 
-  #for t=1:size(averageS,2)
-  #tupleAssociation{t}=[];
-  #end
-
   sl <- length(averageS) * length(sequence)
   seq1 <- rep(0, sl)
-  #mat1 <- matrix(seq1, length(sequences[[1]]))
 
   costMatrix <- matrix(seq1, length(averageS))
   pathMatrix <- matrix(seq1, length(averageS))
 
-
-
-  #costMatrix[1,1] <- quat_similarityCmp(unlist(averageS[1]),unlist(sequence[1]))
   costMatrix[1,1] <- FUN(unlist(averageS[1]),unlist(sequence[1]))
 
 
@@ -120,15 +107,12 @@ myDTW <- function(FUN,averageS,sequence)
 
   for (i in 2:length(averageS))
   {
-    #costMatrix[i,1] <- costMatrix[i-1,1] + quat_similarityCmp(unlist(averageS[i]),unlist(sequence[1]));
     costMatrix[i,1] <- costMatrix[i-1,1] + FUN(unlist(averageS[i]),unlist(sequence[1]));
-
     pathMatrix[i,1] <- 2;
   }
 
   for (j in 2:length(sequence))
   {
-    #costMatrix[1,j] <- costMatrix[1,j-1] + quat_similarityCmp(unlist(sequence[j]),unlist(averageS[1]));
     costMatrix[1,j] <- costMatrix[1,j-1] + FUN(unlist(sequence[j]),unlist(averageS[1]));
     pathMatrix[1,j] <- 1;
   }
@@ -137,7 +121,6 @@ myDTW <- function(FUN,averageS,sequence)
   {
     for (j in 2:length(sequence))
     {
-      #indiceRes <- ArgMin3(costMatrix[i-1,j-1],costMatrix[i,j-1],costMatrix[i-1,j]);
       indiceRes <- ArgMin3Cmp(costMatrix[i-1,j-1],costMatrix[i,j-1],costMatrix[i-1,j]);
       pathMatrix[i,j] <- indiceRes;
 
@@ -153,12 +136,8 @@ myDTW <- function(FUN,averageS,sequence)
       {
         res <- costMatrix[i-1,j]
       }
-      #costMatrix[i,j] <- res + distanceTo(averageS[i],sequence[j])
-      #costMatrix[i,j] <- res + quat_similarity(unlist(averageS[i]),unlist(sequence[j]))
-      #costMatrix[i,j] <- res + quat_similarityCmp(unlist(averageS[i]),unlist(sequence[j]))
       costMatrix[i,j] <- res + FUN(unlist(averageS[i]),unlist(sequence[j]))
-
-    }
+   }
   }
 
   i <- length(averageS)
@@ -181,22 +160,17 @@ myDTW <- function(FUN,averageS,sequence)
     ttt[nr,1:4] <- unlist(sequence[j])[1:4]
 
     tupleAssociation[[i]] <- ttt
-    #print(costMatrix[i,j])
     distance <- costMatrix[i,j] + distance
-    #print(costMatrix[i,j])
     if (pathMatrix[i,j]==0)
     {
       i=i-1;
       j=j-1;
-      #print(paste('0)', i))
     } else if (pathMatrix[i,j]==1)
     {
       j=j-1;
-      #print(paste('1)', i))
     } else if (pathMatrix[i,j]==2)
     {
       i=i-1;
-      #print(paste('2)', i))
     } else
     {
       break
@@ -205,12 +179,6 @@ myDTW <- function(FUN,averageS,sequence)
 
   path1 <- rev(unlist(path1))
   path2 <- rev(unlist(path2))
-
-  #plot(path1, path2)
-  #end
-
-  #return(distance / (length(averageS) + length(sequence)))
-  #return (costMatrix[length(averageS), length(sequence)] / (length(averageS) + length(sequence)))
   normalized_distance = costMatrix[length(averageS), length(sequence)] / (length(averageS) + length(sequence))
   newList <- list("path1" = path1, "path2" = path2, 'normalized_distance' = normalized_distance)
   return (newList)
@@ -221,11 +189,6 @@ myDTWCmp <- cmpfun(myDTW)
 #helper function
 plotsmoothingresults <- function(smoothingresults, plottitle, plotifnoextreams = TRUE, plotsmoothed = FALSE, ylab = "Distance [cm]", legenPosition = "topright")
 {
-  #smoothingresults <- footddf
-  #plottitle <- "footddf"
-  #plotifnoextreams <- TRUE
-  #plotsmoothed <- TRUE
-
   #plot smoothed data
   if (plotsmoothed)
   {
@@ -240,7 +203,6 @@ plotsmoothingresults <- function(smoothingresults, plottitle, plotifnoextreams =
         points(a, smoothingresults$smoothdata[a], col = "red",pch = 4)
         idhelp <- a - 1
         end <- FALSE
-        #footddf$extremumtreshold
         while (smoothingresults$derivative[idhelp] > 0 && !end)
         {
           points(idhelp, smoothingresults$smoothdata[idhelp], col = "blue",pch = 4)
@@ -255,13 +217,11 @@ plotsmoothingresults <- function(smoothingresults, plottitle, plotifnoextreams =
   }
   if (plotifnoextreams || length(smoothingresults$resultsList) > 0)
   {
-    #plot(smoothingresults$data , col = "black")
     plot(smoothingresults$data, xlab = "Time [10^-100 s]", ylab = ylab, col = 'black', type='l',
 	ylim = c(min(smoothingresults$data), max(smoothingresults$data) * 1.5))
 
     lines(smoothingresults$smoothdata, col = 'purple', lty = 2)
     title(main = plottitle)
-    #lines(smoothingresults$data , col = "black")
     if (length(smoothingresults$resultsList) > 0)
       for (a in 1:length(smoothingresults$resultsList))
       {
@@ -271,7 +231,7 @@ plotsmoothingresults <- function(smoothingresults, plottitle, plotifnoextreams =
           points(vec[b], smoothingresults$data[vec[b]], col = "red",pch = 4, lwd=3)
           idhelp <- vec[b] - 1
           end <- FALSE
-          #footddf$extremumtreshold
+          #footddf$extremumthreshold
           while (smoothingresults$derivative[idhelp] > 0 && !end)
           {
             points(idhelp, smoothingresults$data[idhelp], col = "blue",pch = 4)
@@ -283,33 +243,19 @@ plotsmoothingresults <- function(smoothingresults, plottitle, plotifnoextreams =
           }
         }
       }
-    legend(x= legenPosition, y=max(smoothingresults$data) * 1.5, legend=c("Original", "Smoothed","Maxima over treshold", "ROI"), col=c("black", "purple",'red', "blue"), lty=c(1,2,1), cex=0.8)
-    #legend(x= "topright", y=max(ref.res$data) * 1.5, legend=c("Original", "Smoothed", "Maxima", "Maxima over treshold"), col=c("black", "purple", 'cyan','red'), lty=c(1,2,1), cex=0.8)
-
+    legend(x= legenPosition, y=max(smoothingresults$data) * 1.5, legend=c("Original", "Smoothed","Maxima over threshold", "ROI"), col=c("black", "purple",'red', "blue"), lty=c(1,2,1), cex=0.8)
   }
 }
 
 #helper function
 rglplotanalyzedata <- function(refdatakinematic, inputdataalignmentkinematic, xx1, xx2, path1, path2, resultdata, whattodraw = "LeftFoot", skeleton = NULL)
 {
-  #xx1 <- refdatakinematicf$dataRightKnee
-  #xx2 <- inputdataalignmentkinematicf$dataRightKnee
-  #path1 <- footddf$path1
-  #path2 <- footddf$path2
-  #resultdata <- kneeadf
-  #whattodraw <- "LeftLeg"
   library("rgl")
   rgl.open() # Open a new RGL device
-  #rgl.bg(col="white")
-
   alpha <- 0.1
 
   idref <- -1
   idinput <- -1
-
-  #for (a in seq(1, length(path1), 20))
-  #a = 1
-  #for (a in length(path1):length(path1))
   for (a in 1:length(path1))
   {
     if (!(path2[a] %in% resultdata$extremumid))
@@ -317,20 +263,12 @@ rglplotanalyzedata <- function(refdatakinematic, inputdataalignmentkinematic, xx
       if (idref != path1[a])
       {
         idref = path1[a]
-
         print.frame(skeleton, idref, my.color = "green", alpha = a / (4 * length(path1)), spheres = FALSE, df = refdatakinematic)
-
-        #renderactor(refdatakinematic, idref, pointscolors, "green", "green", a / (4 * length(path1)), showspheres = FALSE)
-        #renderactor(refdatakinematic, idref, "green", "green", 16 / length(path1), showspheres = FALSE,linewidth =  2)
       }
       if (idinput != path2[a])
       {
         idinput = path2[a]
-
         print.frame(skeleton, idinput, my.color = "red", alpha = a / (4 * length(path2)), spheres = FALSE, df = inputdataalignmentkinematic)
-
-        #renderactor(inputdataalignmentkinematic, idinput, pointscolors, "red", "red", a / (4 * length(path2)), showspheres = FALSE)
-        #renderactor(inputdataalignmentkinematic, idinput, "red", "red", 16 / length(path2), showspheres = FALSE, 2)
       }
 
       if (path2[a] %in% resultdata$extremumid)
@@ -339,10 +277,6 @@ rglplotanalyzedata <- function(refdatakinematic, inputdataalignmentkinematic, xx
                 c(refdatakinematic[path1[a],paste(whattodraw, ".Dy",sep = "")],inputdataalignmentkinematic[path2[a],paste(whattodraw, ".Dy",sep = "")]),
                 c(refdatakinematic[path1[a],paste(whattodraw, ".Dz",sep = "")],inputdataalignmentkinematic[path2[a],paste(whattodraw, ".Dz",sep = "")])
                 , color = "yellow", alpha = 1, lwd=5)
-        #rgl.texts((xx2[[path2[a]]][1] + xx1[[path1[a]]][1]) / 2,
-        #          (xx2[[path2[a]]][2] + xx1[[path1[a]]][2]) / 2,
-        #          (xx2[[path2[a]]][3] + xx1[[path1[a]]][3]) / 2,
-        #          a, lwd = 5)
       }
       else
       {
@@ -350,10 +284,6 @@ rglplotanalyzedata <- function(refdatakinematic, inputdataalignmentkinematic, xx
                 c(refdatakinematic[path1[a],paste(whattodraw, ".Dy",sep = "")],inputdataalignmentkinematic[path2[a],paste(whattodraw, ".Dy",sep = "")]),
                 c(refdatakinematic[path1[a],paste(whattodraw, ".Dz",sep = "")],inputdataalignmentkinematic[path2[a],paste(whattodraw, ".Dz",sep = "")])
                 , color = "blue", alpha = 1, lwd=1)
-        #rgl.texts((xx2[[path2[a]]][1] + xx1[[path1[a]]][1]) / 2,
-        #          (xx2[[path2[a]]][2] + xx1[[path1[a]]][2]) / 2,
-        #          (xx2[[path2[a]]][3] + xx1[[path1[a]]][3]) / 2,
-        #        a, lwd = 1)
       }
     }
   }
@@ -363,23 +293,12 @@ rglplotanalyzedata <- function(refdatakinematic, inputdataalignmentkinematic, xx
     {
       if (path2[a] == b)
       {
-        #plot(original.bvh, frames.fraction = 0.1, my.color = "red", alpha = 0.1, spheres = FALSE)
-
         print.frame(skeleton, path1[a], my.color = "green", alpha = 1, spheres = FALSE, df = refdatakinematic)
         print.frame(skeleton, path2[a], my.color = "red", alpha = 1, spheres = FALSE, df = inputdataalignmentkinematic)
-
-
-        #renderactor(refdatakinematic, path1[a], "green", "green", 1, showspheres = FALSE, 5)
-        #renderactor(inputdataalignmentkinematic, path2[a], "red", "red", 1, showspheres = FALSE, 5)
-
         lines3d(c(refdatakinematic[path1[a],paste(whattodraw, ".Dx",sep = "")],inputdataalignmentkinematic[path2[a],paste(whattodraw, ".Dx",sep = "")]),
                 c(refdatakinematic[path1[a],paste(whattodraw, ".Dy",sep = "")],inputdataalignmentkinematic[path2[a],paste(whattodraw, ".Dy",sep = "")]),
                 c(refdatakinematic[path1[a],paste(whattodraw, ".Dz",sep = "")],inputdataalignmentkinematic[path2[a],paste(whattodraw, ".Dz",sep = "")])
                 , color = "yellow", alpha = 1.0, lwd=50)
-        #rgl.texts((xx2[[path2[a]]][1] + xx1[[path1[a]]][1]) / 2,
-        #          (xx2[[path2[a]]][2] + xx1[[path1[a]]][2]) / 2,
-        #          (xx2[[path2[a]]][3] + xx1[[path1[a]]][3]) / 2,
-        #          a, lwd = 5)
       }
     }
   }
@@ -390,13 +309,9 @@ rglplotanalyzedata <- function(refdatakinematic, inputdataalignmentkinematic, xx
 
   spheres3d(borderx, bordery, borderz, col = "red", r=0.01)
 
-
-  y <- 0#min(refdata[1,featurename])
+  y <- 0
   planes3d(0,-1,0,y, col = 'orange', alpha = 0.3)
-  #axes3d(col="black", alpha = 1, lwd = 1)
   axes3d(col="white", alpha = 1, lwd = 1)
-
-
 }
 
 #helper function
@@ -405,14 +320,7 @@ scatterplotanalyzedta <- function(x1, y1, z1, x2, y2, z2, path1, path2)
 
   library('scatterplot3d')
   color <- rep("green", length(x1))
-
-  #s3d <- scatterplot3d(x1, z1, y1, color, type='l', pch=20, main="DTW signal mapping of RightThigh roation", angle=90, xlim=c(-1, 1), ylim=c(-1, 0), zlim=c(-1, -0.3),
-  #s3d <- scatterplot3d(x1, z1, y1, color, type='l', pch=20, main="DTW signal mapping of Hips roation", angle=45, xlim=c(-1, 1), ylim=c(-1, 1), zlim=c(-1, 1),
-  #                     s3d <- scatterplot3d(x1, z1, y1, color, type='l', pch=20, main=paste("DTW signal mapping of", "Hips", "roation"), angle=90,
-
-  #at the begining it was angle=45
-  s3d <- scatterplot3d(x1, z1, y1, color, type='l', pch=20, main=paste("DTW signal mapping of", "Hips", "rotation"),# angle=90,
-                       #xlim=c(-0.5, 0.6), ylim=c(-1, 0.1), zlim=c(-.1, 0.9),
+  s3d <- scatterplot3d(x1, z1, y1, color, type='l', pch=20, main=paste("DTW signal mapping of", "Hips", "rotation"),
                        xlab = 'X',ylab = 'Z',zlab = 'Y')
   s3d$points3d(x1, z1, y1, col='green', type="p", pch=20)
   s3d$points3d(x2, z2, y2, col='blue', type="l", pch=20)
@@ -434,18 +342,11 @@ scatterplotanalyzedta <- function(x1, y1, z1, x2, y2, z2, path1, path2)
 smothdata <- function(dd, smoothSize = 0.2, smoothSizeHelper = 0.1)
 {
   library(smoother)
-  #smoothSize <- 0.1
-  #smoothSize <- 0.2
-  #smoothSizeHelper <- 0.1
-
   options('smoother.window' = smoothSize)
   ddsmooth <- smth.gaussian(dd, tails = TRUE)
   minvalue = min(ddsmooth)
   maxvalue = max(ddsmooth)
   diffvalue <- maxvalue - minvalue
-
-  #findAllMinimums(x)
-
   derivative <- rep(0, length(ddsmooth))
   for (a in 2:(length(ddsmooth)-1))
   {
@@ -539,7 +440,7 @@ smothdata <- function(dd, smoothSize = 0.2, smoothSizeHelper = 0.1)
 
 #helper function
 analyzedta <- function(xx1, xx2, FUN=euc.dist, smoothSize = 0.2,
-                       path1 = NA, path2 = NA, extremumtreshold = -1, smoothSizeHelper = 0.1)
+                       path1 = NA, path2 = NA, extremumthreshold = -1, smoothSizeHelper = 0.1)
 {
   dd <- list()
   if (is.na(path1) || is.na(path2))
@@ -621,7 +522,7 @@ generatedtwalignment <- function(FUN, x1, y1, z1, x2, y2, z2, path1, path2)
   return(dd2)
 }
 
-#' This function translate inputdata so that it has common values of limbname Dx, Dy, Dz columns with refdata.
+#' This function translates inputdata so that it has common values of limbname Dx, Dy, Dz columns with refdata.
 #'
 #' @param inputdata input motion capture data frame.
 #' @param refdata reference motion capture data frame.
@@ -660,7 +561,7 @@ alignextremum <- function(footddf, kneeadf, analyzerange = 10)
     return (kneeadf)
   if (length(footddf$extremumid) == 0)
     return (footddf)
-  #analyzerange <- 10
+
   for (a in 1:length(kneeadf$extremumid))
   {
     found <- FALSE
@@ -676,7 +577,6 @@ alignextremum <- function(footddf, kneeadf, analyzerange = 10)
       kneeadf$extremumid[a] <- NA
       kneeadf$extremum[a] <- 0
     }
-    #kneeadf$extremumbool[a] <- TRUE
   }
   kneeadf$extremumid <- kneeadf$extremumid[!is.na(kneeadf$extremumid)]
   a <- 1
@@ -694,14 +594,14 @@ alignextremum <- function(footddf, kneeadf, analyzerange = 10)
 }
 
 #helper function
-tresholdresults <- function(extreamdf, extremumtreshold = -1)
+thresholdresults <- function(extreamdf, extremumthreshold = -1)
 {
-  if (extremumtreshold < 0)
+  if (extremumthreshold < 0)
   {
-    extremumtreshold <- mean(extreamdf$smoothdata) + sd(extreamdf$smoothdata)
+    extremumthreshold <- mean(extreamdf$smoothdata) + sd(extreamdf$smoothdata)
     for (a in 1:length(extreamdf$extremum))
     {
-      if (extreamdf$extremum[a] == 1 &&  extreamdf$smoothdata[a] >= extremumtreshold) #&& (ddsmooth[a] - minvalue) >= (diffvalue * extremumtreshold))
+      if (extreamdf$extremum[a] == 1 &&  extreamdf$smoothdata[a] >= extremumthreshold) #&& (ddsmooth[a] - minvalue) >= (diffvalue * extremumthreshold))
       {
         extreamdf$extremumbool[a] = TRUE
       }
@@ -715,7 +615,7 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
   else {
     for (a in 1:length(extreamdf$extremum))
     {
-      if (extreamdf$extremum[a] == 1 &&  (extreamdf$smoothdata[a] - extreamdf$minvalue) >= (extreamdf$diffvalue * extremumtreshold))
+      if (extreamdf$extremum[a] == 1 &&  (extreamdf$smoothdata[a] - extreamdf$minvalue) >= (extreamdf$diffvalue * extremumthreshold))
       {
         extreamdf$extremumbool[a] = TRUE
       }
@@ -759,29 +659,29 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 
 
 
-#' This function perfomrs motion capture dat analysis based on Dynamic Time Warping.
+#' This function performs motion capture data analysis based on Dynamic Time Warping.
 #'
 #' This procedure detects highest differences between reference and input mocap recording. Analysis goes as follows:
 #' \itemize{
 #' \item Perform DTW on x1 and x2 from list at index 1. Plot DTW alignment This alignment will be used in aligning all other signals. Plot distance between x1 and x2 after alignment and find local maxima in this plot.
-#' In following analysis only maxima with relative value above treshold will be used.
+#' In following analysis only maxima with relative value above threshold will be used.
 #' \item perform DTW alignment for each other element from the data.configuration list, however use the alignment function from first step. Maxima are detected in the same procedure as above, however we take into account only those
-#' of them, that are close enough to maxims from first step of analysis.
+#' of them, that are close enough to maxima from first step of analysis.
 #' }
-#' @param data.configuration a list contaning configuration for the algorithm. Eachelement of the list is a list with following elements (all elements are obligatory):
+#' @param data.configuration a list containing configuration for the algorithm. Each element of the list is a list with following elements (all elements are obligatory):
 #' \itemize{
 #' \item x1 - reference signal for DTW (vectors list),
 #' \item x2 - second signal for DTW (vectors list),
-#' \item FUN - distance function for DTW, use euc.dist or euc.dist1d, however you can define any function that can opperates on x1 and x2,
+#' \item FUN - distance function for DTW, use euc.dist or euc.dist1d, however you can define any function that can operates on x1 and x2,
 #' \item ylab - label on Y axis of the results plot,
-#' \item legend - part of the legend sting over plots,
+#' \item legend - part of the legend over plots,
 #' \item plotRGL - name of the body joint for which DTW alignment of x1 and x2 will be drawn. It will be 3D rgl plot. If plotRGL = NULL plot will not be drawn.
 #' \item skeleton - object of class mocap. It is used to get joints relations while plotting RGL plot.
 #' }
 #' @param ref.d data frame with reference mocap data (default is ref.d=NULL). It is used to get joints relations while plotting RGL plot.
 #' @param in.d  data frame with reference mocap data (default is in.d=NULL). It is used to get joints relations while plotting RGL plot.
-#' @param extremumtreshold treshold from range [0,1], that is used to remove local extreme, which realtive value is below extremumtreshold (default value is extremumtreshold=0.66).
-#' @param smoothSize size of the gaussian smoothing window. Deafult value is smoothSize = 0.1.
+#' @param extremumthreshold threshold from range [0,1], that is used to remove local extreme, which relative value is below extremumthreshold (default value is extremumthreshold=0.66).
+#' @param smoothSize size of the Gaussian smoothing window. Default value is smoothSize = 0.1.
 #'
 #' @return a list containing data.configuration parameters plus algorihm results
 #'
@@ -795,7 +695,7 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #' refdata <- right.arm.motion.1$data.frame
 #' inputdata <- right.arm.motion.2$data.frame
 #'
-#' extremumtreshold <- 0.66
+#' extremumthreshold <- 0.66
 #' smoothSize <- 0.1
 #'
 #' inputdataalignment <- rotatedata(inputdata, refdata, "LeftShoulder","RightShoulder")
@@ -850,7 +750,7 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #' res <- analyze.mocap(data.configuration,
 #' refdatakinematic,
 #' inputdataalignmentkinematic,
-#' extremumtreshold,
+#' extremumthreshold,
 #' smoothSize)
 #'
 #' ########################
@@ -861,7 +761,7 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #'
 #' refdata <- mawashi.geri.left.1$data.frame
 #' inputdata <- mawashi.geri.left.2$data.frame
-#' extremumtreshold <- 0.66
+#' extremumthreshold <- 0.66
 #' smoothSize <- 0.1
 #'
 #' inputdataalignment <- rotatedata(inputdata, refdata, "LeftThigh","RightThigh")
@@ -912,10 +812,9 @@ tresholdresults <- function(extreamdf, extremumtreshold = -1)
 #' res <- analyze.mocap(data.configuration,
 #' refdatakinematic,
 #' inputdataalignmentkinematic,
-#' extremumtreshold,
+#' extremumthreshold,
 #' smoothSize)
-
-analyze.mocap <- function(data.configuration, ref.d = NULL, in.d = NULL, extremumtreshold = 0.66, smoothSize = 0.1)
+analyze.mocap <- function(data.configuration, ref.d = NULL, in.d = NULL, extremumthreshold = 0.66, smoothSize = 0.1)
 {
 
   data.configuration.ret <- data.configuration
@@ -936,19 +835,17 @@ analyze.mocap <- function(data.configuration, ref.d = NULL, in.d = NULL, extremu
     if (a == 1)
     {
       ref.res <- analyzedta(x1, x2, FUN=FUN, smoothSize = smoothSize,
-                            extremumtreshold = extremumtreshold, smoothSizeHelper = 0.1)
+                            extremumthreshold = extremumthreshold, smoothSizeHelper = 0.1)
 
-      dftoanalyze <- tresholdresults(ref.res, extremumtreshold)
+      dftoanalyze <- thresholdresults(ref.res, extremumthreshold)
       plot(ref.res$path1, ref.res$path2, xlab = "Reference signal [sample id]", ylab = "Input signal [sample id]", main ="DTW alignment", type='l')
 
 
       plot(ref.res$data, xlab = "Time [10^-100 s]", ylab =ylab, main =paste("DTWaf of ", legend, " trajectory analysis", sep = ""), col = 'black', type='l', ylim = c(min(ref.res$data), max(ref.res$data) * 1.5))
       lines(ref.res$smoothdata, col = 'purple', lty = 2)
-      #points(footddf$smoothdata, col = 'blue')
-
 
       dc$results <- ref.res
-      dc$tresholded.results <- dftoanalyze
+      dc$thresholded.results <- dftoanalyze
 
       for (b in 1:length(ref.res$extremumid))
       {
@@ -958,7 +855,7 @@ analyze.mocap <- function(data.configuration, ref.d = NULL, in.d = NULL, extremu
       {
         points(dftoanalyze$extremumid[b], dftoanalyze$smoothdata[dftoanalyze$extremumid[b]], col = "red",pch = 4, cex = 2, lwd=3)
       }
-      legend(x= "topright", y=max(ref.res$data) * 1.5, legend=c("Original", "Smoothed", "Maxima", "Maxima over treshold"), col=c("black", "purple", 'cyan','red'), lty=c(1,2,1), cex=0.8)
+      legend(x= "topright", y=max(ref.res$data) * 1.5, legend=c("Original", "Smoothed", "Maxima", "Maxima over threshold"), col=c("black", "purple", 'cyan','red'), lty=c(1,2,1), cex=0.8)
 
       #this might render quite long, but looks nice :-)
       if (!(is.null(plotRGL) || is.null(in.d) || is.null(ref.d)))
@@ -966,19 +863,17 @@ analyze.mocap <- function(data.configuration, ref.d = NULL, in.d = NULL, extremu
         rglplotanalyzedata(ref.d, in.d, x1, x2, ref.res$path1, ref.res$path2,resultdata =   dftoanalyze, whattodraw = plotRGL, skeleton = skeleton)
       }
 
-      #plotsmoothingresults(dftoanalyze,paste("DTWaf of", legend, "trajectory analysis"), plotifnoextreams = TRUE, plotsmoothed = FALSE)
-
       data.configuration.ret[[a]] <- dc
     } else
     {
       res.original <-analyzedta(x1, x2, FUN=FUN, smoothSize = smoothSize,
-                       path1 = ref.res$path1, path2 = ref.res$path2, extremumtreshold = extremumtreshold)
+                       path1 = ref.res$path1, path2 = ref.res$path2, extremumthreshold = extremumthreshold)
 
-      res <- tresholdresults(res.original, extremumtreshold)
+      res <- thresholdresults(res.original, extremumthreshold)
       plotsmoothingresults(alignextremum(dftoanalyze, res, analyzerange),paste("DTWaf of ", legend, " trajectory analysis", sep = ""), plotifnoextreams = TRUE, plotsmoothed = FALSE, ylab = ylab)
 
       dc$results <- res.original
-      dc$tresholded.results <- res
+      dc$thresholded.results <- res
       data.configuration.ret[[a]] <- dc
     }
   }

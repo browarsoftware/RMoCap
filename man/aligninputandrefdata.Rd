@@ -2,7 +2,7 @@
 % Please edit documentation in R/dtwcomparator.R
 \name{aligninputandrefdata}
 \alias{aligninputandrefdata}
-\title{This function translate inputdata so that it has common values of limbname Dx, Dy, Dz columns with refdata.}
+\title{This function translates inputdata so that it has common values of limbname Dx, Dy, Dz columns with refdata.}
 \usage{
 aligninputandrefdata(inputdata, refdata, limbname)
 }
@@ -17,7 +17,7 @@ aligninputandrefdata(inputdata, refdata, limbname)
 data frame aligned as it is described above.
 }
 \description{
-This function translate inputdata so that it has common values of limbname Dx, Dy, Dz columns with refdata.
+This function translates inputdata so that it has common values of limbname Dx, Dy, Dz columns with refdata.
 }
 \examples{
 #See example from analyze.mocap function

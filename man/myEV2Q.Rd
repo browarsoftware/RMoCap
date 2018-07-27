@@ -12,10 +12,10 @@ myEV2Q(axis, angle)
 \item{angle}{in radians.}
 }
 \value{
-4D quaternon vector.
+4D quaternion vector.
 }
 \description{
-All other quternion function are impoted from package RSpincalc.
+All other quaternion function are imported from package RSpincalc.
 }
 \examples{
 myEV2Q(vector.to.unit(c(1,2,3)),pi/4)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/bvhutils.R
 \name{write.bvh}
 \alias{write.bvh}
-\title{This function saves object of mocap class to the file.}
+\title{This function saves object of mocap class to a file.}
 \usage{
 write.bvh(skeleton.helper, path)
 }
@@ -23,7 +23,7 @@ Function uses hierarchical model definition from hierarchy list however data of 
   #plotting BVH
   plot(original.bvh, frames.fraction = 0.1, my.color = "red", alpha = 0.1, spheres = FALSE)
   plot(corrected.bvh, frames.fraction = 0.1, my.color = "green", alpha = 0.1, spheres = FALSE, append = TRUE)
-  #writting BVH to disk
+  #writing BVH to disk
   write.bvh(original.bvh, "original.bvh")
   write.bvh(corrected.bvh, "corrected.bvh")
 }

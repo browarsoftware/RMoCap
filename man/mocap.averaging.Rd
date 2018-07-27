@@ -12,23 +12,23 @@ mocap.averaging(myList, DBAIterationsCount = 50, eps = 1e-04,
 \item{myList}{list of mocap data frames. Algorithm uses columns with names that has .Rx, .Ry and .Rz names. Rotation should be represented
 by Euler angles in degrees.}
 
-\item{DBAIterationsCount}{maximal number of itereations of DBA algorithm (deafulat value is DBAIterationsCount = 50).}
+\item{DBAIterationsCount}{maximal number of iterations of DBA algorithm (default value is DBAIterationsCount = 50).}
 
-\item{eps}{treshold value for DBA - iteration stops when absolute value of difference between normalized DTW distances on this and previous iteration is less than eps (default value is eps = 0.0001).}
+\item{eps}{threshold value for DBA - iteration stops when absolute value of difference between normalized DTW distances on this and previous iteration is less than eps (default value is eps = 0.0001).}
 
-\item{plot.me}{if TRUE, plots DTW distances for each averaged signal (deafulat value is plot.me = 50).}
+\item{plot.me}{if TRUE, plots DTW distances for each averaged signal (default value is plot.me = 50).}
 }
 \value{
 return object of class averaged.mocap.
 }
 \description{
-Averaging is performed on each rotation channel of hierarchical model sepparetly with Dynami Time Warping barycenter averagin (DBA), see:
+Averaging is performed on each rotation channel of hierarchical model separately with Dynamic Time Warping barycentre averaging (DBA), see:
 François Petitjean, Alain Ketterlin, PierreGançarski,
 "A global averaging method for dynamic time warping, with applications to clustering",
 Pattern Recognition, Volume 44, Issue 3, March 2011, Pages 678-693, https://doi.org/10.1016/j.patcog.2010.09.013
-Each rotation signal holds rotation represented as quaternion. Quaternion averging is performed with Quaternion Markley averaging algorithms, see: .
+Each rotation signal holds rotation represented as quaternion. Quaternion averaging is performed with Quaternion Markley averaging algorithms, see: .
 F. Landis Markley, Yang Cheng, John Lucas Crassidis, and Yaakov Oshman.  "Averaging Quaternions", Journal of Guidance, Control, and Dynamics, Vol. 30, No. 4 (2007), pp. 1193-1197. https://doi.org/10.2514/1.28949
-Results are smoothed with Weighted Quaternion Markley averaging algorithms using gaussian kernel.
+Results are smoothed with Weighted Quaternion Markley averaging algorithms using Gaussian kernel.
 }
 \examples{
  #load list of objects of mocap class

@@ -210,7 +210,6 @@ DBA_one_iteration <- function(averageS,sequences)
     averageSR[[t]] <- avg.quaternion.markleyCmp(df)
   }
 
-  #message(paste("Normalized distance: ", costMatrix[length(averageS), length(sequence)] / (length(averageS) + length(sequence))))
   norm.distance[norm.distance.index, signal.id] <<- costMatrix[length(averageS), length(sequence)] / (length(averageS) + length(sequence))
   return(averageSR)
 }
@@ -222,20 +221,15 @@ DBA_one_iterationCmp <- cmpfun(DBA_one_iteration)
 #helper function
 my_dba <- function(sequences, iterationsCount, index = -1, eps)
 {
-  #sequences <- CharTrajResampled
   if (index < 0)
   {
     index <- round(runif(1, 1, nrow(as.data.frame(sequences[1]))))
   }
-  #index <- 1
   average <- getSingleSIgnal(sequences, index)
-  #average <- sequences[[index]]
   for (i in 1:iterationsCount)
   {
     norm.distance.index <<- i
 
-    #print(paste('Iteration ', i, ' initial ', index))
-    #average=DBA_one_iteration(average,sequences);
     average=DBA_one_iterationCmp(average,sequences)
 
     message(paste('Iteration: ', i, ", normalized distance:", norm.distance[norm.distance.index, signal.id], sep = ""))
@@ -371,18 +365,18 @@ resampleArray <- function(sig, newSignalLength) {
 
 #' This function averages a list of motion capture recordings.
 #'
-#' Averaging is performed on each rotation channel of hierarchical model sepparetly with Dynami Time Warping barycenter averagin (DBA), see:
+#' Averaging is performed on each rotation channel of hierarchical model separately with Dynamic Time Warping barycentre averaging (DBA), see:
 #' François Petitjean, Alain Ketterlin, PierreGançarski,
 #' "A global averaging method for dynamic time warping, with applications to clustering",
 #' Pattern Recognition, Volume 44, Issue 3, March 2011, Pages 678-693, https://doi.org/10.1016/j.patcog.2010.09.013
-#' Each rotation signal holds rotation represented as quaternion. Quaternion averging is performed with Quaternion Markley averaging algorithms, see: .
+#' Each rotation signal holds rotation represented as quaternion. Quaternion averaging is performed with Quaternion Markley averaging algorithms, see: .
 #' F. Landis Markley, Yang Cheng, John Lucas Crassidis, and Yaakov Oshman.  "Averaging Quaternions", Journal of Guidance, Control, and Dynamics, Vol. 30, No. 4 (2007), pp. 1193-1197. https://doi.org/10.2514/1.28949
-#' Results are smoothed with Weighted Quaternion Markley averaging algorithms using gaussian kernel.
+#' Results are smoothed with Weighted Quaternion Markley averaging algorithms using Gaussian kernel.
 #' @param myList list of mocap data frames. Algorithm uses columns with names that has .Rx, .Ry and .Rz names. Rotation should be represented
 #' by Euler angles in degrees.
-#' @param DBAIterationsCount maximal number of itereations of DBA algorithm (deafulat value is DBAIterationsCount = 50).
-#' @param eps treshold value for DBA - iteration stops when absolute value of difference between normalized DTW distances on this and previous iteration is less than eps (default value is eps = 0.0001).
-#' @param plot.me if TRUE, plots DTW distances for each averaged signal (deafulat value is plot.me = 50).
+#' @param DBAIterationsCount maximal number of iterations of DBA algorithm (default value is DBAIterationsCount = 50).
+#' @param eps threshold value for DBA - iteration stops when absolute value of difference between normalized DTW distances on this and previous iteration is less than eps (default value is eps = 0.0001).
+#' @param plot.me if TRUE, plots DTW distances for each averaged signal (default value is plot.me = 50).
 #'
 #' @return return object of class averaged.mocap.
 #'
@@ -411,22 +405,6 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
     message("DBAIterationsCount < 1 was changed to 2.")
   }
 
-  #dirPathToData <- "e:\\mocap_data\\karate\\2016-10-26 ShorinRyu MP\\evaluation\\zenkutsu_dachi_right\\segmented\\"
-  #dirPathToData <- "e:\\mocap_data\\karate\\2016-10-26 ShorinRyu MP\\evaluation\\yoko_geri_right\\segmented\\"
-
-  #filesList <- list.files(dirPathToData)
-  #myList <- list()
-  #load all files
-  #for (a in 1:length(filesList))
-  #{
-  #  fileToLoad <- paste (dirPathToData, filesList[a], sep = "", collapse = NULL)
-  #  myData <- read.csv(file=fileToLoad,head=TRUE,sep=",")
-
-    #myData <- rotateChannel(myData)
-    #myData <- rotateChannelCmp(myData)
-
-  #  myList[[a]] <-myData
-  #}
   if (length(myList) < 1)
   {
     return (NULL)
@@ -446,8 +424,6 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
     }
   }
 
-  #fileToLoad <- paste (dirPathToData, filesList[maxLIndex], sep = "", collapse = NULL)
-  #fullData <- read.csv(file=fileToLoad,head=TRUE,sep=",")
   fullData <- myList[[maxLIndex]]
 
 
@@ -482,9 +458,7 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
 
   #Iterate through all features
   for (colToITerate in 1:length(columnsToFindNoEnds))
-  #for (colToITerate in 1:1)
   {
-    #print(columnsToFindNoEnds[colToITerate])
     message(columnsToFindNoEnds[colToITerate])
     fx <- paste(columnsToFindNoEnds[colToITerate], '.Rx',sep = '')
     fy <- paste(columnsToFindNoEnds[colToITerate], '.Ry',sep = '')
@@ -509,7 +483,7 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
         all_quat[[fposition]] <- df
     }
 
-    #add borders for smoothing puroposes
+    #add borders for smoothing purposes
     kk <- append(all_quat[1], all_quat)
     for (a in 1:9)
     {
@@ -520,17 +494,9 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
       kk <- append(kk,all_quat[length(all_quat)])
     }
 
-    #print('1')
-    #ptm <- proc.time()
-    #  as <- my_dba(kk, 2)
-    #print(proc.time() - ptm)
-    #print('2')
-    #ptm <- proc.time()
     signal.id <<- colToITerate
     as <- my_dbaCmp(kk, DBAIterationsCount,-1, eps)
 
-
-    #print(proc.time() - ptm)
 
     smoothedSignal <- gaussianQuaternionSmoother(as, 10)
     smoothedSignal <- smoothedSignal[11:(length(smoothedSignal)-10)]
@@ -626,7 +592,6 @@ mocap.averaging <- function(myList, DBAIterationsCount = 50, eps = 0.0001, plot.
   rm(norm.distance, envir = .GlobalEnv)
   class(res.data) <- "averaged.mocap"
   return (res.data)
-  #write.csv(fullData, file=dirPathToSave, row.names = FALSE, quote = FALSE)
 }
 
 library(compiler)

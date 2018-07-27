@@ -2,7 +2,7 @@
 % Please edit documentation in R/bvhutils.R
 \name{generate.first.frame}
 \alias{generate.first.frame}
-\title{This function generates object of mocap class with zero rotation data.}
+\title{This function generates object of mocap class with zero rotation data (rotation angle is set to 0).}
 \usage{
 generate.first.frame(input.skeleton, Nframes = 1, FrameTime = 0.01)
 }
@@ -17,7 +17,7 @@ generate.first.frame(input.skeleton, Nframes = 1, FrameTime = 0.01)
 object of mocap class.
 }
 \description{
-This function generates object of mocap class with zero rotation data.
+This function generates object of mocap class with zero rotation data (rotation angle is set to 0).
 }
 \examples{
 data("heian.nidan.bvh")

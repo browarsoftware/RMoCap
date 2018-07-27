@@ -20,17 +20,17 @@ calculate.kinematic(dd, LeftFoot = "LeftFoot", RightFoot = "RightFoot",
 
 \item{bodypartname}{if not NULL value the stationary joint of the motion is column with bodypartname. Default value is bodypartname = NULL.}
 
-\item{dyEps}{Treshold value for translation calculation (used only for the first type of call). Default value is dyEps = 5.}
+\item{dyEps}{Threshold value for translation calculation (used only for the first type of call). Default value is dyEps = 5.}
 }
 \value{
 Data frame, which has Dxzy columns updated. All other columns are not updated.
 }
 \description{
 This heuristic method is especially usable while dealing with data acquired by IMU (Inertial measurement unit) sensors. There are two
-possible calls of this method. The first one utilize acceleration data of body joints (.ax, .ay and .az columns). If this data is avilable
+possible calls of this method. The first one utilize acceleration data of body joints (.ax, .ay and .az columns). If this data is available
 method can calculate displacement of long motion, during which an actor uses both left and right leg. If this call is used,
 one should left bodypartname as NULL. The second call is used when we are dealing with data without acceleration data and actor has
-one stationary limb. In this case bodypartname shoule have value of the limb which does not translate during motion.
+one stationary limb. In this case bodypartname should have value of the limb which does not translate during motion.
 }
 \examples{
   #This example uses acceleration data to calculates correct displacement.
@@ -46,7 +46,7 @@ one stationary limb. In this case bodypartname shoule have value of the limb whi
   plot(original.bvh, frames.fraction = 0.1, my.color = "red", alpha = 0.1, spheres = FALSE)
   plot(corrected.bvh, frames.fraction = 0.1, my.color = "green", alpha = 0.1, spheres = FALSE, append = TRUE)
 
-  #writting BVH to disk
+  #writing BVH to disk
   write.bvh(original.bvh, "original.bvh")
   write.bvh(corrected.bvh, "corrected.bvh")
 

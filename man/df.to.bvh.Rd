@@ -2,7 +2,7 @@
 % Please edit documentation in R/csv.to.bvh.R
 \name{df.to.bvh}
 \alias{df.to.bvh}
-\title{This function recalculate direct to hierarchical kinematic model.}
+\title{This function recalculates direct to hierarchical kinematic model.}
 \usage{
 df.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, frame.id = -1,
   debug.messages = FALSE)
@@ -10,7 +10,7 @@ df.to.bvh(input.skeleton, df.to.save, plot.me = FALSE, frame.id = -1,
 \arguments{
 \item{input.skeleton}{object of mocap class that defines hierarchical kinematic model.}
 
-\item{df.to.save}{data frame with column names compatible with input.skeleton. Data that is used for calculation has to be placed in columns with names endind .Dx, .Dy and .Dz.}
+\item{df.to.save}{data frame with column names compatible with input.skeleton. Data that is used for calculation has to be placed in columns with names ending .Dx, .Dy and .Dz.}
 
 \item{plot.me}{if TRUE plot steps of skeleton aligning of frame with index frame.id. Default value is plot.me = FALSE.}
 

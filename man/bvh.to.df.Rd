@@ -15,7 +15,7 @@ bvh.to.df(skeleton, sd = TRUE)
 data frame with direct kinematic.
 }
 \description{
-This function does not perform any algebraic calculation - it just takes data from Dxyz and Rxyz columns. Function can additionally calculate second derivative of Dxyz.
+This function does not perform any algebraic calculation - it just takes data from Dxyz and Rxyz columns. Function can additionally calculates second derivative of Dxyz.
 }
 \examples{
 #an example BVH file

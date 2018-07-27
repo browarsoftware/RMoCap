@@ -2,7 +2,7 @@
 % Please edit documentation in R/bvhutils.R
 \name{vector.angle}
 \alias{vector.angle}
-\title{This function calculates angle between two vectors on the plane designed by those vectors.}
+\title{This function calculates angle between two vectors on the plane designated by those vectors.}
 \usage{
 vector.angle(a, b)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dtwcomparator.R
 \name{euc.dist}
 \alias{euc.dist}
-\title{This function calulcates Euclidean distance between vectors x1 and x2.}
+\title{This function calculates Euclidean distance between vectors x1 and x2.}
 \usage{
 euc.dist(x1, x2)
 }
@@ -15,7 +15,7 @@ euc.dist(x1, x2)
 asqrt(sum((x1 - x2) ^ 2)).
 }
 \description{
-This function calulcates Euclidean distance between vectors x1 and x2.
+This function calculates Euclidean distance between vectors x1 and x2.
 }
 \examples{
 euc.dist(c(1,2,3,4),c(-5,0,-6, 3))

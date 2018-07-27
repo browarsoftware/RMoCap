@@ -18,11 +18,11 @@ generateroty <- function(angley)
   return (ry)
 }
 
-#' This function align to data frames that contains mocap data.
+#' This function align two data frames that contains mocap data.
 #'
-#' Both data frames need to have two common column groups with names ending Dx and Dz. This function calulates vector vv = v1-v2
-#' for both data frames (vv.m for mydata and vv.ref for referencedata) and rotates mydata around Y axis in order to minimize euclidean distane between
-#' vv.m and vv.ref. Minimization is perfomed with simplex method. After this procedure mydata face the same direction as referencdata.
+#' Both data frames need to have two common column groups with names ending Dx and Dz. This function calculates vector vv = v1-v2
+#' for both data frames (vv.m for mydata and vv.ref for referencedata) and rotates mydata around Y axis in order to minimize euclidean distance between
+#' vv.m and vv.ref. Minimization is made with simplex method. After this procedure mydata face the same direction as referencdata.
 #' This procedure works correctly only if root joint of mocap is stationary.
 #'
 #' @param mydata input data frame with mocap data to be algined to referencedata.
@@ -67,10 +67,6 @@ rotatedata <- function(mydata, referencedata, v1, v2)
 
   df <- data.frame(Time = Time)
 
-
-  #v1 <- c(mydata$LeftFoot.Dx[1] - mydata$Hips.Dx[1], 0, mydata$LeftFoot.Dz[1] - mydata$Hips.Dz[1])
-  #v2 <- c(referencedata$LeftFoot.Dx[1] - referencedata$Hips.Dx[1], 0, referencedata$LeftFoot.Dz[1] - referencedata$Hips.Dz[1])
-
   v1 <- c(mydata[1,v1.x] - mydata[1,v2.x],
           0,
           mydata[1,v1.z] - mydata[1,v2.z])
@@ -85,26 +81,9 @@ rotatedata <- function(mydata, referencedata, v1, v2)
   {
     my <- generateroty(x)
     v11 <- my %*% v1
-    #v11 <- rotres[1,]
     return (euc.dist(v11, v2))
   }
   response <- subplex(par=c(0),fn=optimizeangle)
-  response$par
-
-  #euc.dist(v1, v2)
-  #euc.dist(my %*% matrix(v1), v2)
-
-  #my <- generateroty(response$par)
-  #v1
-  #my %*% matrix(v1)
-  #v2
-
-  #vec1 <- rotres[1,]
-
-  #v1
-  #v2
-
-  #columnsToFind
 
   xx <- grep("[[:alnum:]]+\\.Dx", colnames(mydata), ignore.case = TRUE)[1]
   yy <- grep("[[:alnum:]]+\\.Dy", colnames(mydata), ignore.case = TRUE)[1]
@@ -119,7 +98,6 @@ rotatedata <- function(mydata, referencedata, v1, v2)
 
   for (a in 1:length(columnsToFindNoEnds))
   {
-    #a = 2
     xx1 <- paste(columnsToFindNoEnds[a] , xx, sep = "")
     yy1 <- paste(columnsToFindNoEnds[a] , yy, sep = "")
     zz1 <- paste(columnsToFindNoEnds[a] , zz, sep = "")
@@ -132,7 +110,6 @@ rotatedata <- function(mydata, referencedata, v1, v2)
     {
       vec1 <- c(mydata[b,xx1], mydata[b,yy1], mydata[b,zz1])
       my <- generateroty(response$par)
-      #rotres <- my * vec1
       vv <- as.vector(my %*% matrix(vec1))
 
       xxx[[b]] <- vv[1]

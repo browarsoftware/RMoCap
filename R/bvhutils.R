@@ -7,8 +7,8 @@
 #' \itemize{
 #'   \item Joints - list of joints,
 #'   \item Time - vector with time series,
-#'   \item FrameTime - value of time interval between samples
-#'   \item Frame - and samples count.
+#'   \item FrameTime - value of time interval between samples,
+#'   \item Frame - samples count.
 #' }
 #' Each joint is a list that contains:
 #' \itemize{
@@ -20,7 +20,7 @@
 #'   \item Order - rotation order (accepted orders are XYZ, XZY, YXZ, YZX, ZXY or ZYX),
 #'   \item Dxyz - matrix with direct kinematic displacement (calculated from original data),
 #'   \item RawDxyz - matrix with direct kinematic displacement, present only in root joint,
-#'   \item Rxyz - matrix with rotation in degrees of hierarchical kinematic model
+#'   \item Rxyz - matrix with rotation in degrees of hierarchical kinematic model,
 #'   \item Trans - list of rotation - translation matrices that are used to recalculates hierarchical to direct kinematic model.
 #' }
 #'
@@ -37,7 +37,7 @@
 #' summary(heian.nidan)
 mocap <- setClass("mocap")
 
-#' Plots information about number of frames, joints count and joints chierarchy of mocap class.
+#' Plots information about number of frames, joints count and joints hierarchy of mocap class.
 #'
 #' @param mocap.data an object of mocap class.
 #'
@@ -135,7 +135,7 @@ summary.mocap <-function(mocap.data)
 "right.arm.motion.2"
 
 
-#' An object of class mocap that contains karate kick nawashi geri.
+#' An object of class mocap that contains karate kick mawashi geri.
 #'
 #' @docType data
 #'
@@ -147,7 +147,7 @@ summary.mocap <-function(mocap.data)
 "mawashi.geri.left.1"
 
 
-#' An object of class mocap that contains karate kick nawashi geri.
+#' An object of class mocap that contains karate kick mawashi geri.
 #'
 #' @docType data
 #'
@@ -227,7 +227,7 @@ vector.dot <- function(a,b) sum(a*b)
 
 
 
-#' This function calculates angle between two vectors on the plane designed by those vectors.
+#' This function calculates angle between two vectors on the plane designated by those vectors.
 #'
 #' The return value is in the range [0,pi].
 #'
@@ -277,24 +277,24 @@ transformation_matrix <- function(disp, rxyz, order)
 
   if (order[2] == 1)
   {
-    rotM <- rotM %*% MX #ultiplyByMatrix(rotM,MX)
+    rotM <- rotM %*% MX 
   } else if (order[2] == 2)
   {
-    rotM <- rotM %*%  MY #multiplyByMatrix(rotM,MY)
+    rotM <- rotM %*%  MY 
   } else if (order[2] == 3)
   {
-    rotM <- rotM %*% MZ #multiplyByMatrix(rotM,MZ)
+    rotM <- rotM %*% MZ 
   }
 
   if (order[3] == 1)
   {
-    rotM <- rotM %*% MX #multiplyByMatrix(rotM,MX)
+    rotM <- rotM %*% MX 
   } else if (order[3] == 2)
   {
-    rotM <- rotM %*% MY #multiplyByMatrix(rotM,MY)
+    rotM <- rotM %*% MY 
   } else if (order[3] == 3)
   {
-    rotM <- rotM %*% MZ #multiplyByMatrix(rotM,MZ)
+    rotM <- rotM %*% MZ 
   }
 
   transM <- matrix(c(rotM[1,1],rotM[1,2],rotM[1,3],disp[1],
@@ -339,10 +339,7 @@ read.bvh <- function(filepath)
     splitted_line <- unlist(strsplit(line, " "))
     #remove empty "" strings
     splitted_line <- splitted_line[splitted_line != ""]
-
     all_tokens <- c(all_tokens, splitted_line)
-
-    #print(line)
   }
   close(con)
 
@@ -396,12 +393,9 @@ read.bvh <- function(filepath)
                                           strtoi(charToRaw(substr(all_tokens[ii + 7], 1, 1)), base = 16L) - 87)
       } else
       {
-        #throw new BVHLoaderException("Not sure how to handle not (3 or 6) number of channels.")
+        #
       }
 
-      #if ~all(sort(skeleton(nn).order)==[1 2 3])
-      #error('Cannot read channels order correctly. Should be some permutation of [''X'' ''Y'' ''Z''].')
-      #end
       ii <- ii + skeleton$Joints[[nn]]$Nchannels + 1
     } else if (token == "JOINT" || token == "ROOT")
     {
@@ -409,7 +403,6 @@ read.bvh <- function(filepath)
       nn <- nn+1
       if (nn -1 >= length(skeleton$Joints))
       {
-        #print(token)
         skeleton$Joints[[length(skeleton$Joints) + 1]] <- list()
         skeleton$Joints[[nn]]$Nestdepth <- 0
       }
@@ -436,9 +429,6 @@ read.bvh <- function(filepath)
       ii <- ii+1
     } else if (all_tokens[ii] == "End" && all_tokens[ii+1] == "Site")
     {
-      #End effector; unnamed terminating joint
-      #N.B. The "two word" token here is why we don't use a switch statement
-      #for this code.
       nn <- nn+1
       if (nn -1 >= length(skeleton$Joints))
       {
@@ -455,8 +445,6 @@ read.bvh <- function(filepath)
     }
   }#while (!all_tokens.get(ii).equals("MOTION"))
 
-
-  #/Initial processing and error checking
   Nnodes <- length(skeleton$Joints)
   Nchannels <- 0
   Nchainends <- 0
@@ -496,7 +484,7 @@ read.bvh <- function(filepath)
 
   if (raw_data_size != raw_data_size_help)
   {
-    #throw new BVHLoaderException("Error reading BVH file: channels count or frames count does not match.");
+
   }
 
   rawdatavector <- rep(0,Nframes * Nchannels)
@@ -573,11 +561,6 @@ read.bvh <- function(filepath)
     channel_count <- channel_count + skeleton$Joints[[nn]]$Nchannels
   }
 
-
-  #skeleton$Joints[[1]]$Dxyz[1,]
-  #skeleton$Joints[[1]]$Rxyz[1,]
-  #skeleton$Joints[[1]]$Trans[[1]]
-
   #Calculate kinematics
   #No calculations are required for the root nodes.
   #For each joint, calculate the transformation matrix and for convenience
@@ -594,9 +577,7 @@ read.bvh <- function(filepath)
           skeleton$Joints[[nn]]$Rxyz[ff,],
           skeleton$Joints[[nn]]$Order)
 
-        skeleton$Joints[[nn]]$Trans[[ff]] <-skeleton$Joints[[parent]]$Trans[[ff]] %*% transM# multiplyByMatrix(
-        #skeleton$Joints[[parent]]$Trans[[ff]],
-        #transM)
+        skeleton$Joints[[nn]]$Trans[[ff]] <-skeleton$Joints[[parent]]$Trans[[ff]] %*% transM
 
         skeleton$Joints[[nn]]$Dxyz[ff,1] <- skeleton$Joints[[nn]]$Trans[[ff]][1,4]
         skeleton$Joints[[nn]]$Dxyz[ff,2] <- skeleton$Joints[[nn]]$Trans[[ff]][2,4]
@@ -704,14 +685,6 @@ hierarchical.to.direct.kinematic <- function(input.skeleton)
   }
 
 
-  #skeleton$Joints[[1]]$Dxyz[1,]
-  #skeleton$Joints[[1]]$Rxyz[1,]
-  #skeleton$Joints[[1]]$Trans[[1]]
-
-  #Calculate kinematics
-  #No calculations are required for the root nodes.
-  #For each joint, calculate the transformation matrix and for convenience
-  #extract each position in a separate vector.
   for ( nn in 1:length(skeleton$Joints))
   {
     if (skeleton$Joints[[nn]]$Parent != -1 && skeleton$Joints[[nn]]$Nchannels != 0)
@@ -724,9 +697,7 @@ hierarchical.to.direct.kinematic <- function(input.skeleton)
           skeleton$Joints[[nn]]$Rxyz[ff,],
           skeleton$Joints[[nn]]$Order)
 
-        skeleton$Joints[[nn]]$Trans[[ff]] <-skeleton$Joints[[parent]]$Trans[[ff]] %*% transM# multiplyByMatrix(
-        #skeleton$Joints[[parent]]$Trans[[ff]],
-        #transM)
+        skeleton$Joints[[nn]]$Trans[[ff]] <-skeleton$Joints[[parent]]$Trans[[ff]] %*% transM
 
         skeleton$Joints[[nn]]$Dxyz[ff,1] <- skeleton$Joints[[nn]]$Trans[[ff]][1,4]
         skeleton$Joints[[nn]]$Dxyz[ff,2] <- skeleton$Joints[[nn]]$Trans[[ff]][2,4]
@@ -789,7 +760,7 @@ second.derivative <- function(signal)
 
 #' This function get direct kinematic from list generated with function read.bvh or read.mocap function and returns it in the form of data frame.
 #'
-#' This function does not perform any algebraic calculation - it just takes data from Dxyz and Rxyz columns. Function can additionally calculate second derivative of Dxyz.
+#' This function does not perform any algebraic calculation - it just takes data from Dxyz and Rxyz columns. Function can additionally calculates second derivative of Dxyz.
 #'
 #' @param skeleton input hierarchical kinematic model.
 #' @param sd does function should calculate second derivative? Default = TRUE.
@@ -850,9 +821,9 @@ bvh.to.df <- function(skeleton, sd = TRUE)
   return(dataframe)
 }
 
-#' Assign data frame to objcet of mocap class.
+#' Assign data frame to object of mocap class.
 #'
-#' This function does not recalculate chierarchical kinematic model in skeleton.
+#' This function does not recalculate hierarchical kinematic model in skeleton.
 #'
 #' @param skel object of mocap class.
 #' @param df data frame with columns names compatible to hierarchical model definition in skel object.
@@ -874,7 +845,7 @@ set.data.frame <- function(skel, df)
 
 #' This function reads motion capture file on BVH format.
 #'
-#' It also caluclates direct kinematic from hierarchical kinematic. This function calls read.bvh and bvh.to.df to generate single object of mocap class. See documentation for those two functions.
+#' It also calculates direct kinematic from hierarchical kinematic. This function calls read.bvh and bvh.to.df to generate single object of mocap class. See documentation for those two functions.
 #'
 #' @param filepath path to a file.
 #'
@@ -936,9 +907,6 @@ print.frame <- function(obj, frame = 1, my.color = "green", alpha = 0.05, sphere
         y.parent <- obj$data.frame[frame,paste(obj$skeleton$Joints[[parent]]$Name, ".Dy", sep = "")]
         z.parent <- obj$data.frame[frame,paste(obj$skeleton$Joints[[parent]]$Name, ".Dz", sep = "")]
 
-        #segments3d(x = c(x.a, x.parent),
-        #        y = c(y.a, y.parent),
-        #        z = c(z.a, z.parent),  color = my.color, lwd=3, alpha = 1)
       } else
       {
         x.a <- df[frame,paste(obj$skeleton$Joints[[a]]$Name, ".Dx", sep = "")]
@@ -953,10 +921,7 @@ print.frame <- function(obj, frame = 1, my.color = "green", alpha = 0.05, sphere
               y = c(y.a, y.parent),
               z = c(z.a, z.parent),  color = my.color, alpha = alpha)
 
-      #parent <- obj$skeleton$Joints[[a]]$Parent
-      #lines3d(x = c(obj$skeleton$Joints[[a]]$Dxyz[frame,1],obj$skeleton$Joints[[parent]]$Dxyz[frame,1]),
-      #        y = c(obj$skeleton$Joints[[a]]$Dxyz[frame,2],obj$skeleton$Joints[[parent]]$Dxyz[frame,2]),
-      #        z = c(obj$skeleton$Joints[[a]]$Dxyz[frame,3],obj$skeleton$Joints[[parent]]$Dxyz[frame,3]),  color ="green")
+
       if (spheres)
       {
         sphere.f(x = x.a, y = y.a, z = z.a, r=5, n=31, radius = 1, color = my.color, alpha = alpha)
@@ -987,12 +952,12 @@ print.frame <- function(obj, frame = 1, my.color = "green", alpha = 0.05, sphere
 
 #' Overrides plot function to work with mocap class.
 #'
-#' This function uses rgl package for 3D visualizations. It creates interactive 3D plots that enables rotation and scalling.
+#' This function uses rgl package for 3D visualizations. It creates interactive 3D plots that enables rotation and scaling.
 #'
 #' @param obj mocap object.
 #' @param frame index of frame to be show. If default (frame = 0) all frames are drawn.
 #' @param my.color color of the plot.
-#' @param frames.fraction if frame = 0 this parameter indicates what fraction of frames should be drawn (default frames.fraction = 0.1 means that 10\% of frames will be ploted).
+#' @param frames.fraction if frame = 0 this parameter indicates what fraction of frames should be drawn (default frames.fraction = 0.1 means that 10\% of frames will be plotted).
 #' @param alpha value of alpha channel of the plot (0 is 100\% transparency, 1 is no transparency, default is alpha = 0.05).
 #' @param spheres if TRUE, position of body joints will be marked as spheres (default is spheres = FALSE).
 #' @param append if FALSE (default is append = FALSE) a new plot is generated, if TRUE a plot is drawn over open rgl window).
@@ -1017,7 +982,6 @@ plot.mocap <- function(obj, frame = 0, my.color = "green", frames.fraction = 0.1
     step <- ceiling(1.0 / frames.fraction)
     ind <- seq(from = 1, to = obj$skeleton$Frames, by = step)
 
-    #for (a in 1:obj$skeleton$Frames)
     for (a in ind)
       print.frame(obj, a, my.color = my.color, alpha = alpha, spheres = spheres, print.text = print.text)
   }
@@ -1045,10 +1009,10 @@ correctMe3D <- function(startC, stopC, signal1, signal2, signal3, all)
 #' This function corrects translation of the direct kinematic model.
 #'
 #' This heuristic method is especially usable while dealing with data acquired by IMU (Inertial measurement unit) sensors. There are two
-#' possible calls of this method. The first one utilize acceleration data of body joints (.ax, .ay and .az columns). If this data is avilable
+#' possible calls of this method. The first one utilize acceleration data of body joints (.ax, .ay and .az columns). If this data is available
 #' method can calculate displacement of long motion, during which an actor uses both left and right leg. If this call is used,
 #' one should left bodypartname as NULL. The second call is used when we are dealing with data without acceleration data and actor has
-#' one stationary limb. In this case bodypartname shoule have value of the limb which does not translate during motion.
+#' one stationary limb. In this case bodypartname should have value of the limb which does not translate during motion.
 #'
 #'
 #' @param dd data frame with motion capture data.
@@ -1057,7 +1021,7 @@ correctMe3D <- function(startC, stopC, signal1, signal2, signal3, all)
 #' @param show.plot if TRUE (default is show.plot = FALSE) plots results of an algorithm.
 #' @param plot.title part of the title over plots.
 #' @param bodypartname if not NULL value the stationary joint of the motion is column with bodypartname. Default value is bodypartname = NULL.
-#' @param dyEps Treshold value for translation calculation (used only for the first type of call). Default value is dyEps = 5.
+#' @param dyEps Threshold value for translation calculation (used only for the first type of call). Default value is dyEps = 5.
 #'
 #' @return Data frame, which has Dxzy columns updated. All other columns are not updated.
 #'
@@ -1075,7 +1039,7 @@ correctMe3D <- function(startC, stopC, signal1, signal2, signal3, all)
 #'   plot(original.bvh, frames.fraction = 0.1, my.color = "red", alpha = 0.1, spheres = FALSE)
 #'   plot(corrected.bvh, frames.fraction = 0.1, my.color = "green", alpha = 0.1, spheres = FALSE, append = TRUE)
 #'
-#'   #writting BVH to disk
+#'   #writing BVH to disk
 #'   write.bvh(original.bvh, "original.bvh")
 #'   write.bvh(corrected.bvh, "corrected.bvh")
 #'
@@ -1117,9 +1081,6 @@ calculate.kinematic <- function(dd, LeftFoot = "LeftFoot", RightFoot = "RightFoo
 
   zzR <- smth(sqrt(dd[,paste(RightFoot,".ax", sep ="")] ^ 2 + dd[,paste(RightFoot,".ay", sep ="")] ^ 2 + dd[,paste(RightFoot,".az", sep ="")] ^ 2),window = window_size,method = "gaussian") #SMOOTHING
   zzL <- smth(sqrt(dd[,paste(LeftFoot,".ax", sep ="")] ^ 2 + dd[,paste(LeftFoot,".ay", sep ="")] ^ 2 + dd[,paste(LeftFoot,".az", sep ="")] ^ 2),window = window_size,method = "gaussian") #SMOOTHING
-
-  #zzR <- smth(sqrt(dd$RightFoot.ax ^ 2 + dd$RightFoot.ay ^ 2 + dd$RightFoot.az ^ 2),window = window_size,method = "gaussian") #SMOOTHING
-  #zzL <- smth(sqrt(dd$LeftFoot.ax ^ 2 + dd$LeftFoot.ay ^ 2 + dd$LeftFoot.az ^ 2),window = window_size,method = "gaussian") #SMOOTHING
 
   if (show.plot)
   {
@@ -1182,7 +1143,6 @@ calculate.kinematic <- function(dd, LeftFoot = "LeftFoot", RightFoot = "RightFoo
   {
     if (zzR[a] >= zzL[a])
     {
-      #przesu? ca?? sylwetk?, aby Y stopy dotyka?o ziemi
       dd <- MoveToTheGround(dd, a, groundPosition, paste(LeftFoot,".Dy",sep=""))
     }
     else if (zzR[a] < zzL[a])
@@ -1229,7 +1189,7 @@ maketabs <- function(level)
   }
 }
 
-#' This function saves object of mocap class to the file.
+#' This function saves object of mocap class to a file.
 #'
 #' Function uses hierarchical model definition from hierarchy list however data of channels are taken from data frame.
 #'
@@ -1245,7 +1205,7 @@ maketabs <- function(level)
 #'   #plotting BVH
 #'   plot(original.bvh, frames.fraction = 0.1, my.color = "red", alpha = 0.1, spheres = FALSE)
 #'   plot(corrected.bvh, frames.fraction = 0.1, my.color = "green", alpha = 0.1, spheres = FALSE, append = TRUE)
-#'   #writting BVH to disk
+#'   #writing BVH to disk
 #'   write.bvh(original.bvh, "original.bvh")
 #'   write.bvh(corrected.bvh, "corrected.bvh")
 write.bvh <- function(skeleton.helper, path)
@@ -1330,8 +1290,6 @@ write.bvh <- function(skeleton.helper, path)
   {
     jj <- skeleton.helper$skeleton$Joints[[a]]
 
-
-    #odj?? OFFSET od Dx, Dy, Dz
     if (jj$Nchannels == 6)
     {
       columns.helper <- c(columns.helper, paste(jj$Name, ".Dx", sep = ""))
@@ -1362,7 +1320,7 @@ write.bvh <- function(skeleton.helper, path)
 
 #' This function returns n by n rotation matrix that align vector x onto y.
 #'
-#' Bth vector x and y has to be normalized and has to be same length.
+#' Both vector x and y has to be normalized.
 #'
 #' @param x vector to be rotated (has to be normalized).
 #' @param y reference vector (has to be normalized).
@@ -1407,7 +1365,7 @@ rotation.matrix.between.vectors <- function(x,y){
 
 
 
-#' This function generates object of mocap class with zero rotation data.
+#' This function generates object of mocap class with zero rotation data (rotation angle is set to 0).
 #'
 #' @param input.skeleton object of mocap class which defines hierarchical model.
 #' @param Nframes number of frames to be generated.
@@ -1427,13 +1385,7 @@ rotation.matrix.between.vectors <- function(x,y){
 #' plot(first.frame, my.color = "red", frame = 1, alpha = 1, spheres = TRUE, append = TRUE)
 generate.first.frame <- function(input.skeleton, Nframes = 1, FrameTime = 0.01)
 {
-  #Nframes = nrow(df.to.save)
-  #FrameTime = 0.01
-
   skeleton <- input.skeleton$skeleton
-  #skeleton$Time <- seq(from=0,
-  #      to=(FrameTime * Nframes + (FrameTime / 2)),
-  #      by=FrameTime)
   skeleton$Time <- rep(0, Nframes)
 
   if (Nframes > 1)
@@ -1444,8 +1396,7 @@ generate.first.frame <- function(input.skeleton, Nframes = 1, FrameTime = 0.01)
     }
   }
   Nnodes <- length(skeleton$Joints)
-  #print(Nnodes)
-  ###############
+
   channel_count <- 0
   Nframes <- Nframes
   for (nn in 1:Nnodes)
@@ -1505,14 +1456,7 @@ generate.first.frame <- function(input.skeleton, Nframes = 1, FrameTime = 0.01)
     channel_count <- channel_count + skeleton$Joints[[nn]]$Nchannels
   }
 
-  #skeleton$Joints[[1]]$Dxyz[1,]
-  #skeleton$Joints[[1]]$Rxyz[1,]
-  #skeleton$Joints[[1]]$Trans[[1]]
 
-  #Calculate kinematics
-  #No calculations are required for the root nodes.
-  #For each joint, calculate the transformation matrix and for convenience
-  #extract each position in a separate vector.
   for ( nn in 1:length(skeleton$Joints))
   {
     if (skeleton$Joints[[nn]]$Parent != -1 && skeleton$Joints[[nn]]$Nchannels != 0)
@@ -1526,8 +1470,7 @@ generate.first.frame <- function(input.skeleton, Nframes = 1, FrameTime = 0.01)
           skeleton$Joints[[nn]]$Order)
 
         skeleton$Joints[[nn]]$Trans[[ff]] <-skeleton$Joints[[parent]]$Trans[[ff]] %*% transM# multiplyByMatrix(
-        #skeleton$Joints[[parent]]$Trans[[ff]],
-        #transM)
+
 
         skeleton$Joints[[nn]]$Dxyz[ff,1] <- skeleton$Joints[[nn]]$Trans[[ff]][1,4]
         skeleton$Joints[[nn]]$Dxyz[ff,2] <- skeleton$Joints[[nn]]$Trans[[ff]][2,4]
@@ -1536,8 +1479,6 @@ generate.first.frame <- function(input.skeleton, Nframes = 1, FrameTime = 0.01)
     }
   }
 
-  #For an end effector we don't have rotation data;
-  #just need to calculate the final position.
   for (nn in 1:length(skeleton$Joints))
   {
     if (skeleton$Joints[[nn]]$Nchannels == 0)
@@ -1580,7 +1521,6 @@ generate.single.frame <- function(input.skeleton, index =1)
     if (skeleton$Joints[[nn]]$Nchannels == 6)#root node
     {
       #assume translational data is always ordered XYZ
-      #skeleton$Joints[[nn]]$Dxyz <- matrix(rep(0, Nframes * 3), nrow = Nframes, ncol = 3)
       for (b in 1:Nframes)
       {
         skeleton$Joints[[nn]]$Dxyz[index,1] <- skeleton$Joints[[nn]]$Offset[1] + skeleton$Joints[[nn]]$RawDxyz[index,1]
@@ -1588,8 +1528,6 @@ generate.single.frame <- function(input.skeleton, index =1)
         skeleton$Joints[[nn]]$Dxyz[index,3] <- skeleton$Joints[[nn]]$Offset[3] + skeleton$Joints[[nn]]$RawDxyz[index,3]
       }
 
-      #Kinematics of the root element:
-      #skeleton$Joints[[nn]]$Trans <- list()
       for (b in 1:Nframes)
       {
         skeleton$Joints[[nn]]$Trans[[index]] = transformation_matrix(
@@ -1601,31 +1539,12 @@ generate.single.frame <- function(input.skeleton, index =1)
     }
     if (skeleton$Joints[[nn]]$Nchannels == 3)#joint node
     {
-      #skeleton$Joints[[nn]]$Dxyz = matrix(rep(0, Nframes * 3), nrow = Nframes, ncol = 3)
-
-
-      #skeleton$Joints[[nn]]$Trans <- list()
-      #for (a in 1:Nframes)
-      #{
-      #  skeleton$Joints[[nn]]$Trans[[a]] = matrix(rep(0,16), nrow = 4, ncol = 4)
-      #}
 
     }
-    #if (skeleton$Joints[[nn]]$Nchannels == 0)#end node
-    #{
-    #  skeleton$Joints[[nn]]$Dxyz <- matrix(rep(0, Nframes * 3), nrow = Nframes, ncol = 3)
-    #}
+
     channel_count <- channel_count + skeleton$Joints[[nn]]$Nchannels
   }
 
-  #skeleton$Joints[[1]]$Dxyz[1,]
-  #skeleton$Joints[[1]]$Rxyz[1,]
-  #skeleton$Joints[[1]]$Trans[[1]]
-
-  #Calculate kinematics
-  #No calculations are required for the root nodes.
-  #For each joint, calculate the transformation matrix and for convenience
-  #extract each position in a separate vector.
   for ( nn in 1:length(skeleton$Joints))
   {
     if (skeleton$Joints[[nn]]$Parent != -1 && skeleton$Joints[[nn]]$Nchannels != 0)
@@ -1638,9 +1557,7 @@ generate.single.frame <- function(input.skeleton, index =1)
           skeleton$Joints[[nn]]$Rxyz[index,],
           skeleton$Joints[[nn]]$Order)
 
-        skeleton$Joints[[nn]]$Trans[[index]] <-skeleton$Joints[[parent]]$Trans[[index]] %*% transM# multiplyByMatrix(
-        #skeleton$Joints[[parent]]$Trans[[ff]],
-        #transM)
+        skeleton$Joints[[nn]]$Trans[[index]] <-skeleton$Joints[[parent]]$Trans[[index]] %*% transM
 
         skeleton$Joints[[nn]]$Dxyz[index,1] <- skeleton$Joints[[nn]]$Trans[[index]][1,4]
         skeleton$Joints[[nn]]$Dxyz[index,2] <- skeleton$Joints[[nn]]$Trans[[index]][2,4]
@@ -1648,9 +1565,6 @@ generate.single.frame <- function(input.skeleton, index =1)
       }
     }
   }
-
-  #For an end effector we don't have rotation data;
-  #just need to calculate the final position.
   for (nn in 1:length(skeleton$Joints))
   {
     if (skeleton$Joints[[nn]]$Nchannels == 0)
@@ -1671,8 +1585,6 @@ generate.single.frame <- function(input.skeleton, index =1)
     }
   }
 
-
-  #skeleton$Frames <- 1
   df <- bvh.to.df(skeleton)
   returndata <- list(skeleton = skeleton, data.frame = df)
   class(returndata) <- "mocap"
@@ -1683,11 +1595,11 @@ generate.single.frame <- function(input.skeleton, index =1)
 
 #' Calculates quaternion from axis angle.
 #'
-#' All other quternion function are impoted from package RSpincalc.
+#' All other quaternion function are imported from package RSpincalc.
 #' @param axis 3D vector.
 #' @param angle in radians.
 #'
-#' @return 4D quaternon vector.
+#' @return 4D quaternion vector.
 #'
 #' @examples
 #' myEV2Q(vector.to.unit(c(1,2,3)),pi/4)
@@ -1703,7 +1615,7 @@ myEV2Q <- function(axis, angle)
 
 ##################
 
-#' This function genereates list of vectors.
+#' This function generates list of vectors.
 #'
 #' Each list position equals c(ABC.Dx, ABC.Dy, ABC.Dz) where featuresName = ABC is a name of the column of data frame dataToCalculate.
 #'
@@ -1767,9 +1679,9 @@ generate.frame <- function(xt)
   return(list(x = xxt, y = yyt, z = zzt))
 }
 
-#' This function genereates list of angles between vector and coordinates frame.
+#' This function generates list of angles between vector and coordinates frame.
 #'
-#' Vector is defined as v1=(f1-f2). The cordinate frame is:
+#' Vector is defined as v1=(f1-f2). The coordinate frame is:
 #' \itemize{
 #'   \item X=(xt1-xt2),
 #'   \item Z=X x (0,1,0),
@@ -1791,13 +1703,6 @@ generate.frame <- function(xt)
 #' vector.to.angles.frame.list(heian.yondan[1:3,], "RightArm", "RightForearm", "RightShoulder", "LeftShoulder")
 vector.to.angles.frame.list <- function(dataToCalculate, f1, f2, xt1, xt2)
 {
-  #dataToCalculate = refdatakinematic
-  #f1 = "RightArm"
-  #f2 = "RightForearm"
-  #xt1 = "RightShoulder"
-  #xt2 = "LeftShoulder"
-
-
   listhelper <- list()
 
   x <- c()
@@ -1820,9 +1725,7 @@ vector.to.angles.frame.list <- function(dataToCalculate, f1, f2, xt1, xt2)
     y <- c(y, vector.angle(xyz[[3]],vector.helper))
     z <- c(z, vector.angle(xyz[[1]],vector.helper))
   }
-  #listhelper[[b]] <- c(vector.angle(xyz[2],vector.helper),
-  #                     vector.angle(xyz[3],vector.helper),
-  #                     vector.angle(xyz[1],vector.helper))
+
   listhelper[[1]] <- x
   listhelper[[2]] <- y
   listhelper[[3]] <- z
