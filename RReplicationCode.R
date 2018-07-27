@@ -109,6 +109,7 @@ for (a in 1:length(mawashi.geri.right.list))
 }
 #set seed for repeatable results
 set.seed(123)
+#run compiled version of mocap.averaging function (with library(compiler))
 res.data <- mocap.averagingCmp(myList, 50, eps = 0.000001)
 plot(res.data)
 #save results in BVH file

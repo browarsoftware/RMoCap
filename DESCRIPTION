@@ -1,25 +1,30 @@
 Package: RMoCap
 Type: Package
-Title: Package for processing and analysis motion capture (mocap) data.
+Title: Package for processing and kinematic analyzing motion capture data.
 Version: 1.0.0
 Author: Tomasz Hachaj, Marek R. Ogiela
 Maintainer: Tomasz Hachaj <tomekhachaj@o2.pl>
-Description: With functions from this package you can:
-    - load and save Biovision Hierarchy (BVH) files,
-    - convert direct kinematic model to hierarchical kinematic model and vice versa,
-    - plot interactive plots of motion capture (mocap) data,
-    - align two mocap recordings,
-    - while walking with translation and acceleration data is is possible to calculate correct body joints displacement,
-    - average many motion capture recordings that presents the same activity and store it as a single one,
-    - perform comparision analysis of two motion capture recordings using advanced Dynamic Time Wapring - besed procedures and display results,
-    This package has also many useful algebraic functions like Quaternion Markley averaging algorithms etc.
+Description: Package RMoCap is an advance open source tool for scientists, engineers and computer graphics familiar with R language who work with motion capture (MoCap) technology. Package supply them with MoCap data handling, statistical processing, visualizing and analysis. Package uses well established MoCap file exchange format and can be easily integrated with most of motion analysis workflows. Among functions available in RMoCap there are procedures for conversion between hierarchical and direct kinematic models, data averaging, correcting direction of motion, 3D interactive visualization and advanced analysis using Dynamic Time Warping.
+  With functions from this package you can:
+  - load and save Biovision Hierarchy (BVH) files,
+  - convert direct kinematic model to hierarchical kinematic model and vice versa,
+  - plot interactive plots of motion capture (mocap) data,
+  - align two mocap recordings,
+  - it is possible to calculate correct body joints displacement,
+  - average many motion capture recordings that present the same activity,
+  - perform comparison analysis of two motion capture recordings using advanced Dynamic Time Warping - based procedures,
+  This package has also many useful algebraic functions like Quaternion Markley averaging algorithms etc.
+  References:
+  1. Hachaj T, Ogiela MR (2018). “Heuristic method for calculation of human body translation using data from inertial motion capture costume.” International Journal of Electrical and Electronic Engineering & Telecommunications, 1, 26–29.doi:10.18178/ijeetc.7.1.
+  2. Hachaj T, Piekarczyk M, Ogiela M (2017). “Human Actions Analysis: Templates Generation, Matching and Visualization Applied to Motion Capture of Highly-Skilled Karate Athletes.” Sensors, 17(11), 1–24. doi:10.3390/s17112590. 26-29.
+  3. Markley F, Cheng Y, Crassidis J, Oshman Y (2007). “Averaging Quaternions.” J. Guid. Control Dyn., 30, 1193–1197. doi:10.2514/1.28949.
+  4. Petitjean F, Ketterlin A, Gançarski P (2011). “A global averaging method for dynamic time warping, with applications to clustering.” Pattern Recognit., 44(3), 678–693. doi: 10.1016/j.patcog.2010.09.013.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports:
     smoother,
     rgl,
-    smoother,
     RSpincalc,
     subplex,
     signal,
