@@ -51,20 +51,20 @@ mocap <- setClass("mocap")
 #' summary(heian.nidan)
 summary.mocap <-function(mocap.data)
 {
-  message(paste("Frames count:", heian.nidan$skeleton$Frames))
-  message(paste("Joints count:", length(heian.nidan$skeleton$Joints)))
+  message(paste("Frames count:", mocap.data$skeleton$Frames))
+  message(paste("Joints count:", length(mocap.data$skeleton$Joints)))
   message("Joints hierarchy:")
-  for (a in 1:length(heian.nidan$skeleton$Joints))
+  for (a in 1:length(mocap.data$skeleton$Joints))
   {
     tabs <- ""
-    if (heian.nidan$skeleton$Joints[[a]]$Nestdepth - 1 > 0)
+    if (mocap.data$skeleton$Joints[[a]]$Nestdepth - 1 > 0)
     {
       tabs <- ""
-      for (b in 1:(heian.nidan$skeleton$Joints[[a]]$Nestdepth - 1))
+      for (b in 1:(mocap.data$skeleton$Joints[[a]]$Nestdepth - 1))
            tabs <- paste(tabs,"  ", sep="")
       tabs <- paste(tabs,"+-> ", sep="")
     }
-    message(paste(tabs, heian.nidan$skeleton$Joints[[a]]$Name, sep = ""))
+    message(paste(tabs, mocap.data$skeleton$Joints[[a]]$Name, sep = ""))
   }
 }
 
@@ -277,24 +277,24 @@ transformation_matrix <- function(disp, rxyz, order)
 
   if (order[2] == 1)
   {
-    rotM <- rotM %*% MX 
+    rotM <- rotM %*% MX
   } else if (order[2] == 2)
   {
-    rotM <- rotM %*%  MY 
+    rotM <- rotM %*%  MY
   } else if (order[2] == 3)
   {
-    rotM <- rotM %*% MZ 
+    rotM <- rotM %*% MZ
   }
 
   if (order[3] == 1)
   {
-    rotM <- rotM %*% MX 
+    rotM <- rotM %*% MX
   } else if (order[3] == 2)
   {
-    rotM <- rotM %*% MY 
+    rotM <- rotM %*% MY
   } else if (order[3] == 3)
   {
-    rotM <- rotM %*% MZ 
+    rotM <- rotM %*% MZ
   }
 
   transM <- matrix(c(rotM[1,1],rotM[1,2],rotM[1,3],disp[1],
