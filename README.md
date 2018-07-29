@@ -1,5 +1,5 @@
 ﻿# RMoCap
-R language package for processing and analysis motion capture (mocap) data.
+R language package for processing and kinematic analyzing motion capture data.
 
 In order to install package in R, run following commands:
 
@@ -10,13 +10,25 @@ In order to install package in R, run following commands:
 #############
 
 
-install.packages("devtools") # if you have not installed "devtools" package
+if (!require("RMoCap"))
 
-devtools::install_github("browarsoftware/RMoCap")
+{
+
+	if (!require("devtools"))
+  
+	{
+  
+		install.packages("devtools") # if you have not installed "devtools" package
+    
+	}
+  
+	devtools::install_github("browarsoftware/RMoCap")
+  
+}
 
 #test package
 
-library(RMoCap)
+library("RMoCap")
 
 data("right.arm.motion.1")
 
